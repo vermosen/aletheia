@@ -13,20 +13,18 @@
 
 int main(int argc, char * argv[]) {
 
-	int retVal;
-	try
+	int retVal; try
 	{
-		std::string host = "www.quandl.com";
-		uint port = 443;
-
+		std::string tokenStr 	= "H8VUjcUPEFHK_mFnjXp1";
 		connector::quandl qdl;
 
-		qdl.token("H8VUjcUPEFHK_mFnjXp1");
-		qdl.connect(host, port);
-		qdl.setQuery();
-		qdl.getFile();
+		qdl.token(tokenStr);
+		qdl.setHost();
+		qdl.setQuery("foo");
+		qdl.connect();
 
 		retVal = 0;
+
 	}
 	catch (std::exception & ex)
 	{
@@ -35,12 +33,10 @@ int main(int argc, char * argv[]) {
 	}
 	catch (...)
 	{
-		std::cout << "an unexpected error occured" << std::endl;
+		std::cout << "some unexpected error occured..." << std::endl;
 		retVal = 1;
 	}
 
-	//std::cout << "press any key..." << std::endl;
-	//std::string val; std::cin >> val;
 	return retVal;
 
 }
