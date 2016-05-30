@@ -8,19 +8,19 @@
 #ifndef LOGGERS_CONSOLELOGGER_HPP_
 #define LOGGERS_CONSOLELOGGER_HPP_
 
-#include <logger.hpp>
+#include <boost/thread.hpp>
+
+#include "logger.hpp"
+
 
 namespace loggers {
 
 	class consoleLogger : public logger {
 	public:
-		consoleLogger();
+		consoleLogger(verbosity threshold = verbosity::low);
 		virtual ~consoleLogger();
 
-		virtual void addImpl(const std::string & str)
-		{
-			std::cout << str << std::endl;
-		}
+		virtual void addImpl(const std::string &, messageType);
 	};
 } /* namespace loggers */
 

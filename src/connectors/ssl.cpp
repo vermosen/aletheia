@@ -9,8 +9,9 @@
 
 namespace connectors {
 
-	ssl::ssl(bool verifyHost)
-		: 	context_(boost::asio::ssl::context::sslv23),
+	ssl::ssl(const boost::shared_ptr<logger> & l, bool verifyHost)
+		: 	connector(l),
+			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_),
 			querySet_(false),
@@ -55,7 +56,7 @@ namespace connectors {
 			new boost::asio::ip::tcp::resolver::query(host_, port_));
 	}
 
-	virtual void setQuery(const std::string & message)
+	void ssl::setQuery(const std::string & message)
 	{
 		if (message.size() > max_length) throw std::exception();
 

@@ -10,16 +10,21 @@
 
 #include <string>
 
+#include "logger.hpp"
+
 // connect to a data source
 class connector {
 public:
-	connector();
-	virtual ~connector();
+	connector(const boost::shared_ptr<logger> & l) : logger_(l) {};
+	virtual ~connector() {};
 
 	virtual void setHost(const std::string & host, int port = -1) = 0;
 	virtual void connect() = 0;
 	virtual void setQuery(const std::string & message) = 0;
 	virtual void getFile() = 0;
+
+protected:
+	boost::shared_ptr<logger> logger_;
 };
 
 #endif /* CONNECTOR_HPP_ */

@@ -31,7 +31,7 @@ namespace connectors {
 	{
 	public:
 
-		ssl(bool verifyHost = false);
+		ssl(const boost::shared_ptr<logger> & l, bool verifyHost = false);
 
 		// interfaces
 		virtual void setHost(const std::string & host, int port = -1);
@@ -44,7 +44,10 @@ namespace connectors {
 
 			int elapsed = 0; while (!answered_ && elapsed < TIMEOUT)
 			{
-				std::cout << "patience..." << std::endl;
+				logger_->add("patience...",
+					logger::messageType::information,
+					logger::verbosity::low);
+
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				elapsed += 1000;
 			}
@@ -58,7 +61,9 @@ namespace connectors {
 			X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
 			X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
 
-			std::cout << "Verifying " << subject_name << "\n";
+			logger_->add("Verifying " + std::string(subject_name),
+				logger::messageType::information,
+				logger::verbosity::low);
 
 			return preverified;
 		}
@@ -67,10 +72,12 @@ namespace connectors {
 		{
 			if (!err)
 			{
-				std::cout << "Resolve OK" << "\n";
+				logger_->add("host address resolved",
+					logger::messageType::information,
+					logger::verbosity::low);
 
 				socket_.set_verify_callback(
-							boost::bind(&ssl::verify_certificate, this, _1, _2));
+						boost::bind(&ssl::verify_certificate, this, _1, _2));
 
 				boost::asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
 					boost::bind(&ssl::handle_connect, this,
@@ -78,12 +85,14 @@ namespace connectors {
 			}
 			else
 			{
-				std::cout << "Error resolve: " << err.message() << "\n";
+				logger_->add("Error resolving host address:\r\n" + err.message(),
+					logger::messageType::error,
+					logger::verbosity::high);
 			}
 		}
-		void handle_connect(const boost::system::error_code& error)
+		void handle_connect(const boost::system::error_code& err)
 		{
-			if (!error)
+			if (!err)
 			{
 			  socket_.async_handshake(boost::asio::ssl::stream_base::client,
 				  boost::bind(&ssl::handle_handshake, this,
@@ -91,12 +100,14 @@ namespace connectors {
 			}
 			else
 			{
-				std::cout << error << std::endl;
+				logger_->add("Error connecting host:\r\n" + err.message(),
+					logger::messageType::error,
+					logger::verbosity::high);
 			}
 		}
-		void handle_handshake	(const boost::system::error_code& error)
+		void handle_handshake	(const boost::system::error_code& err)
 		{
-			if (!error)
+			if (!err)
 			{
 				boost::asio::async_write(socket_, request_,
 					boost::bind(&ssl::handle_write_request, this,
@@ -105,14 +116,16 @@ namespace connectors {
 			}
 			else
 			{
-				std::cout << error << std::endl;
+				logger_->add("Error performing handshake:\r\n" + err.message(),
+					logger::messageType::error,
+					logger::verbosity::high);
 			}
 		}
-		void handle_write_request	(const boost::system::error_code& error, size_t bytes_transferred)
+		void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred)
 		{
 			std::cout << "new write attempt" << std::endl;
 
-			if (!error)
+			if (!err)
 			{
 				std::cout << "sending request" << std::endl;
 
@@ -122,7 +135,9 @@ namespace connectors {
 			}
 			else
 			{
-				std::cout << "Write failed: " << error.message() << "\n";
+				logger_->add("Error writing query:\r\n" + err.message(),
+					logger::messageType::error,
+					logger::verbosity::high);
 			}
 		}
 		void handle_read_status_line(const boost::system::error_code& err)

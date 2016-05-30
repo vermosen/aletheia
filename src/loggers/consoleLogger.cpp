@@ -9,13 +9,16 @@
 
 namespace loggers {
 
-consoleLogger::consoleLogger() {
-	// TODO Auto-generated constructor stub
+	consoleLogger::consoleLogger(verbosity threshold) : logger(threshold) {
+		// TODO Auto-generated constructor stub
+	}
 
-}
+	consoleLogger::~consoleLogger() {
+		// TODO Auto-generated destructor stub
+	}
 
-consoleLogger::~consoleLogger() {
-	// TODO Auto-generated destructor stub
-}
-
+	void consoleLogger::addImpl(const std::string & str, messageType type)
+	{
+		std::cout << str << std::endl;
+	}
 } /* namespace loggers */

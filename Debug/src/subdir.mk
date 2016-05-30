@@ -4,21 +4,12 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/connector.cpp \
-../src/dataSource.cpp \
-../src/logger.cpp \
 ../src/main.cpp 
 
 OBJS += \
-./src/connector.o \
-./src/dataSource.o \
-./src/logger.o \
 ./src/main.o 
 
 CPP_DEPS += \
-./src/connector.d \
-./src/dataSource.d \
-./src/logger.d \
 ./src/main.d 
 
 

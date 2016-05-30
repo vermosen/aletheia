@@ -15,13 +15,17 @@
 class dataSource
 {
 public:
-	dataSource(const boost::shared_ptr<connector> & connector);
-	virtual ~dataSource();
+	dataSource(const boost::shared_ptr<connector> & connector)
+		: connector_(connector) {};
+
+	virtual ~dataSource() {};
 
 	void getFile()
 	{
 		connector_->getFile();
 	}
+
+	//TODO: void getFileAsync()
 
 protected:
 	boost::shared_ptr<connector> connector_	;

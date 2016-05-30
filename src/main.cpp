@@ -8,17 +8,27 @@
 
 #include <iostream>
 
+#include "loggers/consoleLogger.hpp"
 #include "dataSources/quandl.hpp"
 
 int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
-		std::string tokenStr 	= "H8VUjcUPEFHK_mFnjXp1";
-		dataSources::quandl qdl;
+		boost::shared_ptr<logger> log(
+			new loggers::consoleLogger(logger::verbosity::high));
+
+		log->add("starting new query...",
+				logger::messageType::information,
+				logger::verbosity::medium);
+
+		std::string tokenStr = "H8VUjcUPEFHK_mFnjXp1";
+
+		// new data source
+		dataSources::quandl qdl(log);
 
 		qdl.token(tokenStr);
-		qdl.setQuery("foo");
+		qdl.setQuery("RBA/FXRUKPS");
 		qdl.getFile();
 
 		retVal = 0;

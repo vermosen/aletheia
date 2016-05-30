@@ -13,6 +13,5 @@ namespace dataSources
 	quandl::~quandl() {
 		// TODO Auto-generated destructor stub
 	}
-
 }
 

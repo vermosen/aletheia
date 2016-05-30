@@ -21,7 +21,7 @@
 
 namespace dataSources
 {
-	// a wrapper class for ssl implemetation and data read
+	// a wrapper class for ssl implementation and data read
 	class quandl : public dataSource
 	{
 	public:
@@ -29,6 +29,7 @@ namespace dataSources
 		{
 			csv 	,
 			json 	,
+			xml		,
 			unknown
 		};
 		enum class sortOrder
@@ -37,8 +38,10 @@ namespace dataSources
 			descending	,
 			unknown
 		};
-		quandl() : dataSource(boost::shared_ptr<connector>(
-					new connectors::ssl))
+
+		quandl(const boost::shared_ptr<logger> & l)
+			: dataSource(boost::shared_ptr<connector>(
+				new connectors::ssl(l, false))), logger_(l)
 		{
 			connector_->setHost("www.quandl.com", 443);
 		}
@@ -47,20 +50,23 @@ namespace dataSources
 
 		void token(const std::string & token) { token_ = token; }
 
-		void setQuery(const std::string & index, fileType = fileType::csv)
+		void setQuery(const std::string & index,
+			fileType file = fileType::csv,
+			sortOrder sort = sortOrder::descending)
 		{
-			std::string tt 		= "api/v3/datasets/RBA/FXRUKPS.json?sort_order=asc?api_key=";
+			std::string tt 		= "api/v3/datasets/" + index + ".json?sort_order=asc?api_key=";
 			std::string url 	= tt + token_;
+
+			logger_->add("placing new quandl query:");
+			logger_->add(url);
+
 			connector_->setQuery(url);
 		}
 
-		// TODO: getfile async ?
-
 	private:
-		std::string token_ ;
-
+		std::string 				token_ ;
+		boost::shared_ptr<logger> 	logger_;
 	};
 }
-
 
 #endif /* CONNECTORS_QUANDL_HPP_ */
