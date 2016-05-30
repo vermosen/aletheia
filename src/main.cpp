@@ -8,20 +8,18 @@
 
 #include <iostream>
 
-#include "connector/quandl.hpp"
-
+#include "dataSources/quandl.hpp"
 
 int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
 		std::string tokenStr 	= "H8VUjcUPEFHK_mFnjXp1";
-		connector::quandl qdl;
+		dataSources::quandl qdl;
 
 		qdl.token(tokenStr);
-		qdl.setHost();
 		qdl.setQuery("foo");
-		qdl.connect();
+		qdl.getFile();
 
 		retVal = 0;
 
