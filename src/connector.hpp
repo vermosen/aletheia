@@ -11,8 +11,9 @@
 #include <string>
 
 #include "logger.hpp"
+#include "dataFile.hpp"
 
-// connect to a data source
+// connect to a data source and return a dataFile
 class connector {
 public:
 	connector(const boost::shared_ptr<logger> & l) : logger_(l) {};
@@ -21,7 +22,7 @@ public:
 	virtual void setHost(const std::string & host, int port = -1) = 0;
 	virtual void connect() = 0;
 	virtual void setQuery(const std::string & message) = 0;
-	virtual void getFile() = 0;
+	virtual boost::shared_ptr<dataFile> getFile() = 0;
 
 protected:
 	boost::shared_ptr<logger> logger_;

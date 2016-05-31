@@ -26,5 +26,6 @@ SUBDIRS := \
 src \
 src/loggers \
 src/dataSources \
+src/dataFiles \
 src/connectors \
 

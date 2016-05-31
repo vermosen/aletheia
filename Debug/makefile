@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include src/loggers/subdir.mk
 -include src/dataSources/subdir.mk
+-include src/dataFiles/subdir.mk
 -include src/connectors/subdir.mk
 -include src/subdir.mk
 -include subdir.mk

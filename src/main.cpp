@@ -1,9 +1,8 @@
 //============================================================================
 // Name        : aletheia.cpp
 // Author      : Jean-Mathieu Vermosen
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Version     : 0.0.0.a
+// Description : Download data from quandl website, Ansi-style
 //============================================================================
 
 #include <iostream>
@@ -15,6 +14,11 @@ int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
+		// test
+		boost::shared_ptr<dataFile> myFile =
+			abstractFactory<dataFile, std::string>::createInstance("JSON");
+
+		////////////
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::high));
 

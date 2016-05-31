@@ -20,6 +20,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "connector.hpp"
+#include "dataFiles/jsonFile.hpp"
 
 #define TIMEOUT 5000
 
@@ -38,7 +39,7 @@ namespace connectors {
 		virtual void setQuery(const std::string & message);
 		virtual void connect();
 
-		virtual void getFile()
+		virtual boost::shared_ptr<dataFile> getFile()
 		{
 			if (!answered_ && querySet_) this->connect();
 
@@ -51,6 +52,8 @@ namespace connectors {
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				elapsed += 1000;
 			}
+
+			return boost::shared_ptr<dataFile>(new dataFiles::jsonFile);
 		}
 	private:
 
