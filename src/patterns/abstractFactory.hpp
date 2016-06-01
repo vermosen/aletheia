@@ -18,7 +18,6 @@
 template <typename C, typename K>
 class abstractFactory
 {
-
 public:
 	typedef K key_type;
 	typedef std::map<key_type, C*(*)()> map_type;
@@ -33,23 +32,38 @@ public:
 			return boost::shared_ptr<C>(it->second());
 	}
 
-protected:
+public:
 	static map_type * getMap()
 	{
-		if (!map_) { map_ = new map_type; }
+		if (!map_)
+		{
+			map_ = new map_type;
+		}
 		return map_;
 	}
-
+private:
 	static map_type * map_;
-
 };
 
 // create function
 template <typename C, typename T> C * create() { return new T; }
 
-//registration struct
+/*
+// alternative
 template <typename C, typename K, typename T>
-class registerType : abstractFactory<C, K>
+struct registerType// : abstractFactory<C, K>
+{
+public:
+	registerType(const K & key)
+	{
+		fact_.getMap()->insert(std::make_pair(key, &create<C, T>));
+	}
+private:
+	static abstractFactory<C, K> fact_;
+};*/
+
+template <typename C, typename K, typename T>
+struct registerType : abstractFactory<C, K>
 {
 public:
 	registerType(const K & key)

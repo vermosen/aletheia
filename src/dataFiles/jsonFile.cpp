@@ -10,7 +10,7 @@
 namespace dataFiles {
 
 	registerType<dataFile, std::string, jsonFile>
-		jsonFile::register_ __attribute__ ((init_priority (102)))("JSON");
+		jsonFile::register_("JSON");
 
 	jsonFile::jsonFile() : dataFile() {
 		// TODO Auto-generated constructor stub

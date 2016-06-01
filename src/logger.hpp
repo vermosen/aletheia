@@ -19,11 +19,11 @@ class logger
 public:
 	enum class messageType
 	{
-		information	,
-		warning		,
-		debug		,
-		error		,
-		unknown
+		information	= 1,
+		warning		= 2,
+		debug		= 3,
+		error		= 4,
+		unknown 	= 0
 	};
 
 	enum class verbosity

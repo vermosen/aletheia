@@ -9,7 +9,6 @@
 #define DATAFILE_JSONFILE_HPP_
 
 #include "dataFile.hpp"
-#include "patterns/abstractFactory.hpp"
 
 namespace dataFiles {
 
@@ -17,8 +16,8 @@ namespace dataFiles {
 	public:
 		jsonFile();
 		virtual ~jsonFile();
-	private:
-		static registerType<dataFile, std::string, jsonFile> register_;
+
+		static registerType < dataFile, std::string, jsonFile> register_;
 	};
 
 } /* namespace dataFile */

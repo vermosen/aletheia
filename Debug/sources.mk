@@ -23,6 +23,7 @@ CPP_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+src/patterns \
 src \
 src/loggers \
 src/dataSources \
