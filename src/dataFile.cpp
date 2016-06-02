@@ -12,3 +12,7 @@
 template<>
 abstractFactory <dataFile, std::string>::map_type *
 	abstractFactory <dataFile, std::string>::map_ = 0;
+
+template<>
+abstractFactory <dataFile, enumDataFile>::map_type *
+	abstractFactory <dataFile, enumDataFile>::map_ = 0;

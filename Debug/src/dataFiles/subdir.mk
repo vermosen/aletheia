@@ -4,13 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/dataFiles/jsonFile.cpp 
+../src/dataFiles/csv.cpp \
+../src/dataFiles/json.cpp \
+../src/dataFiles/xml.cpp 
 
 OBJS += \
-./src/dataFiles/jsonFile.o 
+./src/dataFiles/csv.o \
+./src/dataFiles/json.o \
+./src/dataFiles/xml.o 
 
 CPP_DEPS += \
-./src/dataFiles/jsonFile.d 
+./src/dataFiles/csv.d \
+./src/dataFiles/json.d \
+./src/dataFiles/xml.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

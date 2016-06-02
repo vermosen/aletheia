@@ -21,17 +21,11 @@
 
 namespace dataSources
 {
-	// a wrapper class for ssl implementation and data read
+	// a wrapper class for ssl implementation and file data read
 	class quandl : public dataSource
 	{
 	public:
-		enum class fileType
-		{
-			csv 	,
-			json 	,
-			xml		,
-			unknown
-		};
+
 		enum class sortOrder
 		{
 			ascending	,
@@ -39,9 +33,10 @@ namespace dataSources
 			unknown
 		};
 
-		quandl(const boost::shared_ptr<logger> & l)
+		quandl(const boost::shared_ptr<logger> & l,
+			   enumDataFile type = enumDataFile::csv)
 			: dataSource(boost::shared_ptr<connector>(
-				new connectors::ssl(l, false))), logger_(l)
+				new connectors::ssl(l, false)), l, type)
 		{
 			connector_->setHost("www.quandl.com", 443);
 		}
@@ -51,21 +46,64 @@ namespace dataSources
 		void token(const std::string & token) { token_ = token; }
 
 		void setQuery(const std::string & index,
-			fileType file = fileType::csv,
 			sortOrder sort = sortOrder::descending)
 		{
-			std::string tt 		= "api/v3/datasets/" + index + ".json?sort_order=asc?api_key=";
-			std::string url 	= tt + token_;
+			std::stringstream ss;
+
+			ss << "api/v3/datasets/.";
+
+			switch (type_)
+			{
+				case (enumDataFile::csv):
+				{
+					ss << "csv";
+					break;
+				}
+				case (enumDataFile::json):
+				{
+					ss << "json";
+					break;
+				}
+				case (enumDataFile::xml):
+				{
+					ss << "xml";
+					break;
+				}
+				default:
+				{
+					throw std::exception();
+				}
+			}
+
+			ss << "?sort_order=";
+
+			switch (sort)
+			{
+				case (sortOrder::ascending):
+				{
+					ss << "asc";
+					break;
+				}
+				case (sortOrder::descending):
+				{
+					ss << "desc";
+					break;
+				}
+				default:
+				{
+					throw std::exception();
+				}
+			}
+
+			ss << "?api_key=" << token_;
 
 			logger_->add("placing new quandl query:");
-			logger_->add(url);
-
-			connector_->setQuery(url);
+			logger_->add(ss.str());
+			connector_->setQuery(ss.str());
 		}
 
 	private:
-		std::string 				token_ ;
-		boost::shared_ptr<logger> 	logger_;
+		std::string token_ 	;
 	};
 }
 

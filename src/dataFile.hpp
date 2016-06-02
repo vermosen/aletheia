@@ -10,17 +10,20 @@
 
 #include "patterns/abstractFactory.hpp"
 
+enum class enumDataFile
+{
+	json,
+	csv,
+	xml
+};
+
 class dataFile {
 public:
 	dataFile() {};
 	virtual ~dataFile() {};
 
-	//static abstractFactory<dataFile, std::string>::map_type * factoryMap_;
-};
+	virtual void parse() = 0;
 
-//template<>
-//abstractFactory <dataFile, std::string>::map_type *
-//	abstractFactory <dataFile, std::string>::map_
-//	 = new abstractFactory::map_type /*__attribute__ ((init_priority (101)))*/;
+};
 
 #endif /* DATAFILE_HPP_ */

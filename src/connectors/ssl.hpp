@@ -20,7 +20,8 @@
 #include <boost/lexical_cast.hpp>
 
 #include "connector.hpp"
-#include "dataFiles/jsonFile.hpp"
+#include "dataFiles/json.hpp"
+#include "dataFiles/csv.hpp"
 
 #define TIMEOUT 5000
 
@@ -53,7 +54,7 @@ namespace connectors {
 				elapsed += 1000;
 			}
 
-			return boost::shared_ptr<dataFile>(new dataFiles::jsonFile);
+			return boost::shared_ptr<dataFile>(new dataFiles::json);
 		}
 	private:
 

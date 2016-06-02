@@ -18,7 +18,11 @@ int main(int argc, char * argv[]) {
 		boost::shared_ptr<dataFile> myFile =
 			abstractFactory<dataFile, std::string>::createInstance("JSON");
 
+		boost::shared_ptr<dataFile> myFile2 =
+					abstractFactory<dataFile, enumDataFile>::createInstance(enumDataFile::csv);
+
 		////////////
+
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::high));
 
