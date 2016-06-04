@@ -17,13 +17,13 @@ namespace dataFiles {
 		json();
 		virtual ~json();
 
-		virtual void parse()
+		virtual void parse(std::stringstream & ss)
 		{
 
 		}
 
 		static registerType < dataFile, std::string, json> register_;
-		static registerType < dataFile, enumDataFile, json> enumRegister_;
+		static registerType < dataFile, dataFile::type, json> enumRegister_;
 	};
 
 } /* namespace dataFile */

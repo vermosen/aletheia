@@ -12,8 +12,8 @@ namespace dataFiles {
 	registerType<dataFile, std::string, xml>
 		xml::register_("XML");
 
-	registerType<dataFile, enumDataFile, xml>
-		xml::enumRegister_(enumDataFile::xml);
+	registerType<dataFile, dataFile::type, xml>
+		xml::enumRegister_(dataFile::type::xml);
 
 	xml::xml() {
 		// TODO Auto-generated constructor stub

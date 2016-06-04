@@ -15,25 +15,19 @@ class dataSource
 {
 public:
 	dataSource(
-		const boost::shared_ptr<connector> & connector,
-		const boost::shared_ptr<logger> & logger,
-		enumDataFile type)
-		: connector_(connector), logger_(logger), type_(type) {};
+		const boost::shared_ptr<connector> & 	connector,
+		const boost::shared_ptr<logger> & 		logger	)
+		: connector_(connector), logger_(logger) {};
 
 	virtual ~dataSource() {};
 
-	void getFile()
-	{
-		connector_->getFile();
-	}
+	virtual boost::shared_ptr<dataFile> getFile() = 0;
 
 	//TODO: void getFileAsync()
 
 protected:
-	boost::shared_ptr<connector> connector_	;
-	boost::shared_ptr<logger> 	 logger_	;
-	enumDataFile				 type_		;
-	boost::shared_ptr<dataFile>  file_		;
+	boost::shared_ptr<connector> 	connector_	;
+	boost::shared_ptr<logger> 		logger_		;
 };
 
 #endif /* DATASOURCE_HPP_ */

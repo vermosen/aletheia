@@ -28,7 +28,7 @@ namespace connectors {
 
 			// set the callbacks
 			socket_.set_verify_callback(
-				boost::bind(&ssl::verify_certificate, this, _1, _2));
+				boost::bind(&ssl::handle_checkCertificate, this, _1, _2));
 		}
 		else
 		{
@@ -56,17 +56,17 @@ namespace connectors {
 			new boost::asio::ip::tcp::resolver::query(host_, port_));
 	}
 
-	void ssl::setQuery(const std::string & message)
+	void ssl::setQuery(const boost::shared_ptr<query> & qr)
 	{
-		if (message.size() > max_length) throw std::exception();
-
 		std::cout << "setting new query" << std::endl;
 
 		try
 		{
 			// build the query
 			std::ostream request_stream(&request_);
-			request_stream << "GET " << "/" << message << " HTTP/1.1\r\n";
+			request_stream << "GET /";
+			request_stream << qr->getStream().str();
+			request_stream << " HTTP/1.1\r\n";
 			request_stream << "Host: " << host_ << "\r\n";
 			request_stream << "Accept: */*\r\n";
 			request_stream << "Connection: close\r\n\r\n";
@@ -84,6 +84,7 @@ namespace connectors {
 	}
 
 	void ssl::connect()
+
 	{
 		resolver_.async_resolve(*query_,
 			boost::bind(&ssl::handle_resolve, this,
@@ -91,6 +92,145 @@ namespace connectors {
 				boost::asio::placeholders::iterator));
 
 		service_.run();
+	}
+
+	// callbacks
+	bool ssl::handle_checkCertificate(bool preverified, boost::asio::ssl::verify_context& ctx)
+	{
+		char subject_name[256];
+		X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
+		X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
+
+		logger_->add("Verifying " + std::string(subject_name),
+			logger::messageType::information,
+			logger::verbosity::low);
+
+		return preverified;
+	}
+	void ssl::handle_resolve(const boost::system::error_code& err,
+						boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+	{
+		if (!err)
+		{
+			logger_->add("host address resolved",
+				logger::messageType::information,
+				logger::verbosity::low);
+
+			boost::asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
+				boost::bind(&ssl::handle_connect, this,
+					boost::asio::placeholders::error));
+		}
+		else
+		{
+			logger_->add("Error resolving host address:\r\n" + err.message(),
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
+	void ssl::handle_connect(const boost::system::error_code& err)
+	{
+		if (!err)
+		{
+		  socket_.async_handshake(boost::asio::ssl::stream_base::client,
+			  boost::bind(&ssl::handle_handshake, this,
+				boost::asio::placeholders::error));
+		}
+		else
+		{
+			logger_->add("Error connecting host:\r\n" + err.message(),
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
+	void ssl::handle_handshake(const boost::system::error_code& err)
+	{
+		if (!err)
+		{
+			logger_->add("host successfully handchecked",
+				logger::messageType::information,
+				logger::verbosity::medium);
+
+			boost::asio::async_write(socket_, request_,
+				boost::bind(&ssl::handle_write_request, this,
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
+		}
+		else
+		{
+			logger_->add("Error performing handshake:\r\n" + err.message(),
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
+	void ssl::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
+	{
+		logger_->add("new write attempt",
+			logger::messageType::information,
+			logger::verbosity::low);
+
+		if (!err)
+		{
+			logger_->add("sending new request",
+				logger::messageType::information,
+				logger::verbosity::medium);
+
+			boost::asio::async_read_until(socket_, response_, "\r\n",
+				boost::bind(&ssl::handle_read_status_line, this,
+					boost::asio::placeholders::error));
+		}
+		else
+		{
+			logger_->add("Error writing query:\r\n" + err.message(),
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
+	void ssl::handle_read_status_line(const boost::system::error_code& err)
+	{
+		if (!err)
+		{
+			// Check that response is OK.
+			std::istream response_stream(&response_);
+			std::string http_version;
+			response_stream >> http_version;
+			unsigned int status_code;
+			response_stream >> status_code;
+			std::string status_message;
+			std::getline(response_stream, status_message);
+			if (!response_stream || http_version.substr(0, 5) != "HTTP/")
+			{
+				logger_->add("Invalid response\n",
+					logger::messageType::error,
+					logger::verbosity::high);
+
+				return;
+			}
+			if (status_code != 200)
+			{
+				logger_->add("Response returned with status code "
+					+ boost::lexical_cast<std::string>(status_code) + "\r\n",
+					logger::messageType::error,
+					logger::verbosity::high);
+
+				return;
+			}
+
+			logger_->add("Status code: "
+				+ boost::lexical_cast<std::string>(status_code) + "\r\n",
+				logger::messageType::information,
+				logger::verbosity::low);
+
+			// Read the response headers, which are terminated by a blank line.
+			boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
+				boost::bind(&ssl::handle_read_headers, this,
+					boost::asio::placeholders::error));
+		}
+		else
+		{
+			logger_->add("Error: " + err.message() + "\n",
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
 	}
 
 } /* namespace connector */

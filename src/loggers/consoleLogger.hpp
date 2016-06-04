@@ -8,6 +8,7 @@
 #ifndef LOGGERS_CONSOLELOGGER_HPP_
 #define LOGGERS_CONSOLELOGGER_HPP_
 
+#include <ostream>
 #include <boost/thread.hpp>
 
 #include "logger.hpp"

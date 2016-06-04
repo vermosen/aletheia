@@ -12,8 +12,8 @@ namespace dataFiles {
 	registerType<dataFile, std::string, json>
 		json::register_("JSON");
 
-	registerType<dataFile, enumDataFile, json>
-		json::enumRegister_(enumDataFile::json);
+	registerType<dataFile, dataFile::type, json>
+		json::enumRegister_(dataFile::type::json);
 
 	json::json() : dataFile() {
 		// TODO Auto-generated constructor stub

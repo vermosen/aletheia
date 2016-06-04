@@ -17,13 +17,13 @@ namespace dataFiles {
 		csv();
 		virtual ~csv();
 
-		virtual void parse()
+		virtual void parse(std::stringstream & ss)
 		{
 
 		}
 
 		static registerType < dataFile, std::string, csv> register_;
-		static registerType < dataFile, enumDataFile, csv> enumRegister_;
+		static registerType < dataFile, dataFile::type, csv> enumRegister_;
 	};
 
 } /* namespace dataFiles */

@@ -8,103 +8,81 @@
 #ifndef CONNECTORS_QUANDL_HPP_
 #define CONNECTORS_QUANDL_HPP_
 
+
 #include <string>
 #include <exception>
-
-#include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
-#include <connectors/ssl.hpp>
 #include <iostream>
 
-#include "connectors/ssl.hpp"
 #include "dataSource.hpp"
+#include "connectors/ssl.hpp"
 
 namespace dataSources
 {
-	// a wrapper class for ssl implementation and file data read
+	class quandlQuery : public query
+	{
+	public:
+		quandlQuery(const std::string & token	,
+					const std::string & catalog	,
+		  	  	  	const std::string & index	,
+					dataFile::type 		type	,
+					dataFile::sortOrder sort	)
+		: catalog_(catalog), index_(index),
+		  type_(type), sort_(sort) {}
+
+		virtual std::stringstream getStream()
+		{
+			std::stringstream ss;
+
+			ss << "api/v3/datasets/";
+			ss << catalog_ << "/" << index_ << ".";
+			ss << type_ << "?sort_order=" << sort_;
+			ss << "?api_key=" << token_;
+
+			return ss;
+
+		}
+	private:
+		std::string token_;
+		std::string catalog_;
+		std::string index_;
+		dataFile::type type_;
+		dataFile::sortOrder sort_;
+	};
+
+	// a wrapper class with ssl implementation and file data read
 	class quandl : public dataSource
 	{
 	public:
-
-		enum class sortOrder
-		{
-			ascending	,
-			descending	,
-			unknown
-		};
-
-		quandl(const boost::shared_ptr<logger> & l,
-			   enumDataFile type = enumDataFile::csv)
+		quandl(const boost::shared_ptr<logger> & l)
 			: dataSource(boost::shared_ptr<connector>(
-				new connectors::ssl(l, false)), l, type)
+					new connectors::ssl(l, false)), l)
 		{
 			connector_->setHost("www.quandl.com", 443);
 		}
 
 		virtual ~quandl();
 
-		void token(const std::string & token) { token_ = token; }
-
-		void setQuery(const std::string & index,
-			sortOrder sort = sortOrder::descending)
+		virtual boost::shared_ptr<dataFile> getFile()
 		{
-			std::stringstream ss;
-
-			ss << "api/v3/datasets/.";
-
-			switch (type_)
-			{
-				case (enumDataFile::csv):
-				{
-					ss << "csv";
-					break;
-				}
-				case (enumDataFile::json):
-				{
-					ss << "json";
-					break;
-				}
-				case (enumDataFile::xml):
-				{
-					ss << "xml";
-					break;
-				}
-				default:
-				{
-					throw std::exception();
-				}
-			}
-
-			ss << "?sort_order=";
-
-			switch (sort)
-			{
-				case (sortOrder::ascending):
-				{
-					ss << "asc";
-					break;
-				}
-				case (sortOrder::descending):
-				{
-					ss << "desc";
-					break;
-				}
-				default:
-				{
-					throw std::exception();
-				}
-			}
-
-			ss << "?api_key=" << token_;
-
-			logger_->add("placing new quandl query:");
-			logger_->add(ss.str());
-			connector_->setQuery(ss.str());
+			std::string s = connector_->getStream().str();
+			std::cout << s << std::endl;
+			return NULL;
 		}
 
+		void token(const std::string & token) { token_ = token; }
+
+		void setQuery(const std::string & catalog,
+					  const std::string & index,
+					  dataFile::type t = dataFile::type::csv,
+					  dataFile::sortOrder s = dataFile::sortOrder::descending);
+
 	private:
+
 		std::string token_ 	;
+		boost::shared_ptr<quandlQuery> query_;
 	};
+
+
 }
 
 #endif /* CONNECTORS_QUANDL_HPP_ */

@@ -12,8 +12,8 @@ namespace dataFiles {
 	registerType<dataFile, std::string, csv>
 		csv::register_("CSV");
 
-	registerType<dataFile, enumDataFile, csv>
-		csv::enumRegister_(enumDataFile::csv);
+	registerType<dataFile, dataFile::type, csv>
+		csv::enumRegister_(dataFile::type::csv);
 
 	csv::csv() {
 		// TODO Auto-generated constructor stub

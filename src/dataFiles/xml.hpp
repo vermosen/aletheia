@@ -9,6 +9,7 @@
 #define DATAFILES_XML_HPP_
 
 #include "dataFile.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace dataFiles {
 
@@ -17,13 +18,15 @@ namespace dataFiles {
 		xml();
 		virtual ~xml();
 
-		virtual void parse()
+		virtual void parse(std::stringstream & ss)
 		{
-
+			boost::property_tree::ptree tree;
+			boost::property_tree::read_xml(ss, tree);
+			std::cout << tree.get<std::string>("foo");
 		}
 
 		static registerType < dataFile, std::string, xml> register_;
-		static registerType < dataFile, enumDataFile, xml> enumRegister_;
+		static registerType < dataFile, dataFile::type, xml> enumRegister_;
 	};
 
 } /* namespace dataFiles */
