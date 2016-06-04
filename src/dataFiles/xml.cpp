@@ -1,7 +1,7 @@
 /*
  * xml.cpp
  *
- *  Created on: Jun 2, 2016
+ *  Created on: May 30, 2016
  *      Author: vermosen
  */
 
@@ -9,19 +9,22 @@
 
 namespace dataFiles {
 
-	registerType<dataFile, std::string, xml>
-		xml::register_("XML");
-
 	registerType<dataFile, dataFile::type, xml>
 		xml::enumRegister_(dataFile::type::xml);
 
-	xml::xml() {
+	xml::xml() : dataFile() {
 		// TODO Auto-generated constructor stub
-
 	}
 
 	xml::~xml() {
 		// TODO Auto-generated destructor stub
 	}
 
-} /* namespace dataFiles */
+	const boost::shared_ptr<boost::property_tree::ptree> xml::parse(std::stringstream & ss)
+	{
+		pt_ = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree);
+		boost::property_tree::read_xml(ss, *pt_);
+		return pt_;
+	}
+
+} /* namespace dataFile */

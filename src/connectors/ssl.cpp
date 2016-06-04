@@ -70,21 +70,23 @@ namespace connectors {
 			request_stream << "Host: " << host_ << "\r\n";
 			request_stream << "Accept: */*\r\n";
 			request_stream << "Connection: close\r\n\r\n";
-
-			std::string result(buffers_begin(request_.data()), buffers_begin(request_.data()) + request_.size());
-
 			querySet_ = true;
 
-			std::cout << result <<std::endl;
+			logger_->add("new query set for the distant host:\r\n" +
+				std::string(buffers_begin(request_.data()),
+					buffers_begin(request_.data()) + request_.size()),
+					logger::messageType::information,
+					logger::verbosity::medium);
 		}
 		catch(std::exception & ex)
 		{
-			std::cout << ex.what() << std::endl;
+			logger_->add("error while creating nez query",
+				logger::messageType::error,
+				logger::verbosity::high);
 		}
 	}
 
 	void ssl::connect()
-
 	{
 		resolver_.async_resolve(*query_,
 			boost::bind(&ssl::handle_resolve, this,

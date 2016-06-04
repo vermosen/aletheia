@@ -41,6 +41,10 @@ namespace dataSources
 			return ss;
 
 		}
+
+		//accessors
+		dataFile::type type() { return type_; }
+
 	private:
 		std::string token_;
 		std::string catalog_;
@@ -62,11 +66,25 @@ namespace dataSources
 
 		virtual ~quandl();
 
-		virtual boost::shared_ptr<dataFile> getFile()
+		virtual void getData()
 		{
-			std::string s = connector_->getStream().str();
-			std::cout << s << std::endl;
-			return NULL;
+			boost::shared_ptr<dataFile> file =
+				abstractFactory<dataFile, dataFile::type>::createInstance(query_->type());
+
+			boost::shared_ptr<boost::property_tree::ptree> data = file->parse(connector_->getStream());
+
+			printData(*data);
+
+			// turn it into time series
+
+		}
+
+		void printData(const boost::property_tree::ptree & pt)
+		{
+			for (boost::property_tree::ptree::const_iterator it = pt.begin(); it != pt.end(); ++it) {
+				std::cout << it->first << " : " << it->second.get_value<std::string>() << std::endl;
+				printData(it->second);
+			}
 		}
 
 		void token(const std::string & token) { token_ = token; }

@@ -9,6 +9,7 @@
 #define DATAFILE_HPP_
 
 #include <iostream>
+#include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include "patterns/abstractFactory.hpp"
@@ -31,7 +32,10 @@ public:
 
 	dataFile() {};
 	virtual ~dataFile() {};
-	virtual void parse(std::stringstream & ss) = 0;
+	virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss) = 0;
+
+protected:
+	boost::shared_ptr<boost::property_tree::ptree> pt_;
 };
 
 std::ostream& operator<<(std::ostream&, dataFile::type);

@@ -14,15 +14,6 @@ int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
-		// test
-		//boost::shared_ptr<dataFile> myFile =
-			//abstractFactory<dataFile, std::string>::createInstance("JSON");
-
-		//boost::shared_ptr<dataFile> myFile2 =
-			//abstractFactory<dataFile, dataFile::type>::createInstance(dataFile::type::csv);
-
-		////////////
-
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::high));
 
@@ -31,8 +22,10 @@ int main(int argc, char * argv[]) {
 		// new data source
 		dataSources::quandl qdl(log);
 		qdl.token(tokenStr);
-		qdl.setQuery("RBA","FXRUKPS", dataFile::type::csv);
-		qdl.getFile();
+		qdl.setQuery("RBA","FXRUKPS", dataFile::type::xml);
+
+
+		qdl.getData();
 
 		retVal = 0;
 

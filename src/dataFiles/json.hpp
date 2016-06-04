@@ -8,6 +8,9 @@
 #ifndef DATAFILE_JSON_HPP_
 #define DATAFILE_JSON_HPP_
 
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 #include "dataFile.hpp"
 
 namespace dataFiles {
@@ -17,15 +20,15 @@ namespace dataFiles {
 		json();
 		virtual ~json();
 
-		virtual void parse(std::stringstream & ss)
+		virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss)
 		{
-
+			pt_ = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree);
+			boost::property_tree::read_json(ss, *pt_);
+			return pt_;
 		}
 
-		static registerType < dataFile, std::string, json> register_;
 		static registerType < dataFile, dataFile::type, json> enumRegister_;
 	};
-
 } /* namespace dataFile */
 
 #endif /* DATAFILE_JSON_HPP_ */

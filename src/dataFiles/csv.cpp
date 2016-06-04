@@ -9,9 +9,6 @@
 
 namespace dataFiles {
 
-	registerType<dataFile, std::string, csv>
-		csv::register_("CSV");
-
 	registerType<dataFile, dataFile::type, csv>
 		csv::enumRegister_(dataFile::type::csv);
 

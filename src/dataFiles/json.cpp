@@ -9,9 +9,6 @@
 
 namespace dataFiles {
 
-	registerType<dataFile, std::string, json>
-		json::register_("JSON");
-
 	registerType<dataFile, dataFile::type, json>
 		json::enumRegister_(dataFile::type::json);
 

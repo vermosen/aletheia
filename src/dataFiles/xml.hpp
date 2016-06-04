@@ -8,27 +8,22 @@
 #ifndef DATAFILES_XML_HPP_
 #define DATAFILES_XML_HPP_
 
-#include "dataFile.hpp"
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include "dataFile.hpp"
 
 namespace dataFiles {
 
-	class xml: public dataFile {
+	class xml : public dataFile {
 	public:
 		xml();
 		virtual ~xml();
+		virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss);
 
-		virtual void parse(std::stringstream & ss)
-		{
-			boost::property_tree::ptree tree;
-			boost::property_tree::read_xml(ss, tree);
-			std::cout << tree.get<std::string>("foo");
-		}
-
-		static registerType < dataFile, std::string, xml> register_;
+	private:
 		static registerType < dataFile, dataFile::type, xml> enumRegister_;
 	};
-
 } /* namespace dataFiles */
 
 #endif /* DATAFILES_XML_HPP_ */

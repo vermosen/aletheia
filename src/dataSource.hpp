@@ -21,7 +21,7 @@ public:
 
 	virtual ~dataSource() {};
 
-	virtual boost::shared_ptr<dataFile> getFile() = 0;
+	virtual void getData() = 0;
 
 	//TODO: void getFileAsync()
 
