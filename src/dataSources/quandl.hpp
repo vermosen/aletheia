@@ -12,6 +12,7 @@
 #include <string>
 #include <exception>
 #include <iostream>
+#include <fstream>
 
 #include "dataSource.hpp"
 #include "connectors/ssl.hpp"
@@ -39,7 +40,6 @@ namespace dataSources
 			ss << "?api_key=" << token_;
 
 			return ss;
-
 		}
 
 		//accessors
@@ -70,6 +70,12 @@ namespace dataSources
 		{
 			boost::shared_ptr<dataFile> file =
 				abstractFactory<dataFile, dataFile::type>::createInstance(query_->type());
+
+			std::ofstream ff("/tmp/file.txt");
+
+			ff << connector_->getStream().str();
+
+			ff.close();
 
 			boost::shared_ptr<boost::property_tree::ptree> data = file->parse(connector_->getStream());
 

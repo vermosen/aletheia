@@ -73,12 +73,25 @@ namespace connectors {
 				std::istream response_stream(&response_);
 				std::string header;
 				while (std::getline(response_stream, header) && header != "\r")
-					std::cout << header << "\n";
-				std::cout << "\n";
+					header_ << &response_;
+
+				// then removing for the first line
+				std::getline(response_stream, header);
+					header_ << &response_;
+
+				std::cout << header_.str() << std::endl;
 
 				// Write whatever content we already have to output.
 				if (response_.size() > 0)
 					content_ << &response_;
+
+				std::cout << content_.str() << std::endl;
+
+				//char a[100];
+
+				//content_.read(a, 100);
+
+				//std::cout << a << std::endl;
 
 				// Start reading remaining data until EOF.
 				boost::asio::async_read(socket_, response_,
@@ -124,7 +137,8 @@ namespace connectors {
 
 		std::string host_;
 		std::string port_;
-	    std::stringstream content_;
+		std::stringstream content_;
+		std::stringstream header_;
 	    boost::asio::streambuf request_;
 	    boost::asio::streambuf response_;
 
