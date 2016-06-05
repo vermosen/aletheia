@@ -2,7 +2,7 @@
  * dataFile.hpp
  *
  *  Created on: May 30, 2016
- *      Author: vermosen
+ *      Author: jean-mathieu vermosen
  */
 
 #ifndef DATAFILE_HPP_

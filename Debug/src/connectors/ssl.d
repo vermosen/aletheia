@@ -1,25 +1,25 @@
 src/connectors/ssl.d: ../src/connectors/ssl.cpp \
- /home/vermosen/git/aletheia/src/connectors/ssl.hpp \
- /home/vermosen/git/aletheia/src/connector.hpp \
- /home/vermosen/git/aletheia/src/logger.hpp \
- /home/vermosen/git/aletheia/src/dataFile.hpp \
- /home/vermosen/git/aletheia/src/patterns/abstractFactory.hpp \
- /home/vermosen/git/aletheia/src/dataFiles/json.hpp \
- /home/vermosen/git/aletheia/src/dataFile.hpp \
- /home/vermosen/git/aletheia/src/dataFiles/csv.hpp
+ /home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp \
+ /home/vermosen/eclipse/aletheia/src/connector.hpp \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
+ /home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp
 
-/home/vermosen/git/aletheia/src/connectors/ssl.hpp:
+/home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp:
 
-/home/vermosen/git/aletheia/src/connector.hpp:
+/home/vermosen/eclipse/aletheia/src/connector.hpp:
 
-/home/vermosen/git/aletheia/src/logger.hpp:
+/home/vermosen/eclipse/aletheia/src/logger.hpp:
 
-/home/vermosen/git/aletheia/src/dataFile.hpp:
+/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
 
-/home/vermosen/git/aletheia/src/patterns/abstractFactory.hpp:
+/home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp:
 
-/home/vermosen/git/aletheia/src/dataFiles/json.hpp:
+/home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp:
 
-/home/vermosen/git/aletheia/src/dataFile.hpp:
+/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
 
-/home/vermosen/git/aletheia/src/dataFiles/csv.hpp:
+/home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp:
