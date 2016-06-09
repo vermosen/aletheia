@@ -234,5 +234,33 @@ namespace connectors {
 				logger::verbosity::high);
 		}
 	}
+	void ssl::handle_read_headers(const boost::system::error_code& err)
+	{
+		if (!err)
+		{
+			// Process the response headers.
+			std::istream response_stream(&response_);
+
+			// unload the stream until we reached the content (standalone empty line)
+			std::string h; while (std::getline(response_stream, h) && h != "\r")
+				header_ << h;
+
+			// Write whatever content we already have to output.
+			if (response_.size() > 0)
+				content_ << &response_;
+
+			// Start reading remaining data until EOF.
+			boost::asio::async_read(socket_, response_,
+				boost::asio::transfer_at_least(1),
+				boost::bind(&ssl::handle_read_content, this,
+					boost::asio::placeholders::error));
+		}
+		else
+		{
+			logger_->add("Error: " + err.message() + "\n",
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
 
 } /* namespace connector */

@@ -7,6 +7,8 @@
 
 #include <dataFiles/xml.hpp>
 
+using namespace boost::property_tree;
+
 namespace dataFiles {
 
 	registerType<dataFile, dataFile::type, xml>
@@ -20,10 +22,10 @@ namespace dataFiles {
 		// TODO Auto-generated destructor stub
 	}
 
-	const boost::shared_ptr<boost::property_tree::ptree> xml::parse(std::stringstream & ss)
+	const boost::shared_ptr<ptree> xml::parse(std::stringstream & ss)
 	{
-		pt_ = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree);
-		boost::property_tree::read_xml(ss, *pt_);
+		pt_ = boost::shared_ptr<ptree>(new ptree);
+		read_xml(ss, *pt_, xml_parser::trim_whitespace | xml_parser::no_comments);
 		return pt_;
 	}
 

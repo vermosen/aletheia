@@ -10,23 +10,26 @@
 #include "loggers/consoleLogger.hpp"
 #include "dataSources/quandl.hpp"
 
+using namespace boost::gregorian;
+
 int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
 		boost::shared_ptr<logger> log(
-			new loggers::consoleLogger(logger::verbosity::high));
+			new loggers::consoleLogger(logger::verbosity::low));
 
 		std::string tokenStr = "H8VUjcUPEFHK_mFnjXp1";
+
+		// start end dates
+		boost::optional<date> start = date(2000, Jan, 01);
+		boost::optional<date> end = date(2000, Feb, 01);
 
 		// new data source
 		dataSources::quandl qdl(log);
 		qdl.token(tokenStr);
-		qdl.setQuery("RBA","FXRUKPS", dataFile::type::xml);
-
-
+		qdl.setQuery("RBA","FXRUKPS", start, end, dataFile::type::xml);
 		qdl.getData();
-
 		retVal = 0;
 
 	}

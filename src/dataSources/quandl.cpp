@@ -10,13 +10,14 @@
 
 namespace dataSources
 {
-
 	quandl::~quandl() {
 		// TODO Auto-generated destructor stub
 	}
 
 	void quandl::setQuery(const std::string & catalog,
 				  	  	  const std::string & index,
+						  const boost::optional<boost::gregorian::date> & start,
+						  const boost::optional<boost::gregorian::date> & end,
 						  dataFile::type t,
 						  dataFile::sortOrder s)
 	{
@@ -24,9 +25,9 @@ namespace dataSources
 			logger::messageType::information,
 			logger::verbosity::medium);
 
-		query_ = boost::shared_ptr<quandlQuery>(new quandlQuery(token_, catalog, index, t, s));
+		query_ = boost::shared_ptr<quandlQuery>(
+			new quandlQuery(token_, catalog, index, start, end, t, s));
 
 		connector_->setQuery(query_);
 	}
 }
-

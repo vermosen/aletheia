@@ -64,46 +64,7 @@ namespace connectors {
 		void handle_handshake		(const boost::system::error_code&);
 		void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
 		void handle_read_status_line(const boost::system::error_code& err);
-
-		void handle_read_headers(const boost::system::error_code& err)
-		{
-			if (!err)
-			{
-				// Process the response headers.
-				std::istream response_stream(&response_);
-				std::string header;
-				while (std::getline(response_stream, header) && header != "\r")
-					header_ << &response_;
-
-				// then removing for the first line
-				std::getline(response_stream, header);
-					header_ << &response_;
-
-				std::cout << header_.str() << std::endl;
-
-				// Write whatever content we already have to output.
-				if (response_.size() > 0)
-					content_ << &response_;
-
-				std::cout << content_.str() << std::endl;
-
-				//char a[100];
-
-				//content_.read(a, 100);
-
-				//std::cout << a << std::endl;
-
-				// Start reading remaining data until EOF.
-				boost::asio::async_read(socket_, response_,
-					boost::asio::transfer_at_least(1),
-					boost::bind(&ssl::handle_read_content, this,
-						boost::asio::placeholders::error));
-			}
-			else
-			{
-				std::cout << "Error: " << err << "\n";
-			}
-		}
+		void handle_read_headers	(const boost::system::error_code& err);
 
 		void handle_read_content(const boost::system::error_code& err)
 		{
@@ -124,7 +85,9 @@ namespace connectors {
 			}
 			else if (err != boost::asio::error::eof)
 			{
-				std::cout << "Error: " << err << "\n";
+				logger_->add("Error: " + err.message() + "\n",
+					logger::messageType::error,
+					logger::verbosity::high);
 			}
 		}
 

@@ -4,13 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/loggers/consoleLogger.cpp 
+../src/loggers/consoleLogger.cpp \
+../src/loggers/fileLogger.cpp 
 
 OBJS += \
-./src/loggers/consoleLogger.o 
+./src/loggers/consoleLogger.o \
+./src/loggers/fileLogger.o 
 
 CPP_DEPS += \
-./src/loggers/consoleLogger.d 
+./src/loggers/consoleLogger.d \
+./src/loggers/fileLogger.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
