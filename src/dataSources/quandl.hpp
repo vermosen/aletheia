@@ -79,41 +79,14 @@ namespace dataSources
 
 		virtual ~quandl();
 
-		virtual void getData()
+		virtual timeSeries<double> & getData()
 		{
 			boost::shared_ptr<dataFile> file =
 				abstractFactory<dataFile, dataFile::type>::createInstance(query_->type());
 
-			std::ofstream ff("/tmp/file2.xml");
+			file->parse(connector_->getStream());
 
-			ff << connector_->getStream().str();
-
-			ff.close();
-
-			boost::shared_ptr<boost::property_tree::ptree> pt = file->parse(connector_->getStream());
-
-			// TODO: add timeseries class
-			std::vector<std::tuple<boost::gregorian::date, double> > values;
-
-			for (auto& item : pt->get_child("quandl-response.dataset.data"))
-			{
-				if (item.first == "datum")
-				{
-					std::pair<boost::property_tree::ptree::const_assoc_iterator,
-						boost::property_tree::ptree::const_assoc_iterator > bounds = item.second.equal_range("");
-
-					std::advance(bounds.first, 1);
-					std::string dateStr = bounds.first->second.get_value<std::string>();
-					std::advance(bounds.first, 1);
-					std::string valueStr = bounds.first->second.get_value<std::string>();
-
-					boost::gregorian::date date(boost::gregorian::from_simple_string(dateStr));;
-					double value = boost::lexical_cast<double>(valueStr);
-
-					values.push_back(std::pair<boost::gregorian::date, double>(date, value));
-					//std::cout << dateStr << ", " << valueStr << std::endl;
-				}
-			}
+			return file->getData();
 		}
 
 		void printData(const boost::property_tree::ptree & pt)

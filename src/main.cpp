@@ -9,13 +9,29 @@
 
 #include "loggers/consoleLogger.hpp"
 #include "dataSources/quandl.hpp"
+#include "timeSeries.hpp"
 
 using namespace boost::gregorian;
+using namespace boost::posix_time;
 
 int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
+		// test
+		std::vector<ptime> dt;
+		std::vector<double> data;
+
+		dt.push_back(ptime(date(2016, 01, 01)));
+		dt.push_back(ptime(date(2016, 01, 02)));
+
+		data.push_back(1.254);
+		data.push_back(2.265);
+
+		timeSeries<double> ts(dt, data);
+
+		// test
+
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
 

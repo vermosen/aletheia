@@ -12,6 +12,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include "timeSeries.hpp"
+
 #include "patterns/abstractFactory.hpp"
 
 class dataFile {
@@ -32,10 +34,11 @@ public:
 
 	dataFile() {};
 	virtual ~dataFile() {};
-	virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss) = 0;
+	timeSeries<double> & getData();
+	virtual void parse(std::stringstream & ss) = 0;
 
 protected:
-	boost::shared_ptr<boost::property_tree::ptree> pt_;
+	timeSeries<double> ts_;
 };
 
 std::ostream& operator<<(std::ostream&, dataFile::type);

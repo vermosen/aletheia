@@ -9,7 +9,6 @@
 #define CONNECTORS_SSL_HPP_
 
 #include <cstdlib>
-#include <iostream>
 #include <fstream>
 
 #include <boost/thread.hpp>
@@ -18,6 +17,7 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/chrono.hpp>
 
 #include "connector.hpp"
 #include "dataFiles/json.hpp"
@@ -39,22 +39,7 @@ namespace connectors {
 		virtual void setHost(const std::string & host, int port = -1);
 		virtual void setQuery(const boost::shared_ptr<query> &);
 		virtual void connect();
-		virtual std::stringstream & getStream()
-		{
-			if (!answered_ && querySet_) this->connect();
-
-			int elapsed = 0; while (!answered_ && elapsed < TIMEOUT)
-			{
-				logger_->add("patience...",
-					logger::messageType::information,
-					logger::verbosity::low);
-
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-				elapsed += 1000;
-			}
-
-			return content_;
-		}
+		virtual std::stringstream & getStream();
 
 	private:
 		// client callbacks
@@ -65,31 +50,7 @@ namespace connectors {
 		void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
 		void handle_read_status_line(const boost::system::error_code& err);
 		void handle_read_headers	(const boost::system::error_code& err);
-
-		void handle_read_content(const boost::system::error_code& err)
-		{
-			if (!err)
-			{
-				// Write all of the data that has been read so far.
-				content_ << &response_;
-
-				// Continue reading remaining data until EOF.
-				boost::asio::async_read(socket_, response_,
-					boost::asio::transfer_at_least(1),
-					boost::bind(&ssl::handle_read_content, this,
-						boost::asio::placeholders::error));
-			}
-			else if (err == boost::asio::error::eof)
-			{
-				answered_ = true;
-			}
-			else if (err != boost::asio::error::eof)
-			{
-				logger_->add("Error: " + err.message() + "\n",
-					logger::messageType::error,
-					logger::verbosity::high);
-			}
-		}
+		void handle_read_content	(const boost::system::error_code& err);
 
 	private:
 		boost::asio::io_service service_;
@@ -105,7 +66,7 @@ namespace connectors {
 	    boost::asio::streambuf request_;
 	    boost::asio::streambuf response_;
 
-	    bool querySet_;
+	    bool ready_;
 		bool answered_;
 	};
 } /* namespace connector */

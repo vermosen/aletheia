@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -lssl -lcrypto -lboost_thread -lboost_system -lboost_filesystem -lboost_date_time
+LIBS := -lpthread -lssl -lcrypto -lboost_thread -lboost_chrono -lboost_system -lboost_filesystem -lboost_date_time
 

@@ -16,13 +16,7 @@ namespace dataFiles {
 	public:
 		csv();
 		virtual ~csv();
-
-		virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss)
-		{
-			// TODO
-			pt_ = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree);
-			return pt_;
-		}
+		virtual void parse(std::stringstream & ss);
 
 		static registerType < dataFile, dataFile::type, csv> enumRegister_;
 	};

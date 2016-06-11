@@ -14,7 +14,7 @@ namespace connectors {
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_),
-			querySet_(false),
+			ready_(false),
 			answered_(false)
 	{
 
@@ -49,8 +49,9 @@ namespace connectors {
 
 		host_ = host;
 
-		std::cout << "trying to connect to host " << host_
-				<< " on port " << port_ << std::endl;
+		logger_->add("trying to resolve host " + host,
+			logger::messageType::information,
+			logger::verbosity::low);
 
 		query_ = boost::shared_ptr<boost::asio::ip::tcp::resolver::query>(
 			new boost::asio::ip::tcp::resolver::query(host_, port_));
@@ -58,7 +59,10 @@ namespace connectors {
 
 	void ssl::setQuery(const boost::shared_ptr<query> & qr)
 	{
-		std::cout << "setting new query" << std::endl;
+
+		logger_->add("setting new query...",
+			logger::messageType::information,
+			logger::verbosity::low);
 
 		try
 		{
@@ -70,7 +74,7 @@ namespace connectors {
 			request_stream << "Host: " << host_ << "\r\n";
 			request_stream << "Accept: */*\r\n";
 			request_stream << "Connection: close\r\n\r\n";
-			querySet_ = true;
+			ready_ = true;
 
 			logger_->add("new query set for the distant host:\r\n" +
 				std::string(buffers_begin(request_.data()),
@@ -94,6 +98,47 @@ namespace connectors {
 				boost::asio::placeholders::iterator));
 
 		service_.run();
+	}
+
+	std::stringstream & ssl::getStream()
+	{
+
+		if (!answered_ && ready_)
+
+		{
+			boost::chrono::high_resolution_clock timer;
+			boost::chrono::time_point<boost::chrono::high_resolution_clock> start = timer.now();
+
+			this->connect();
+
+			/* should be useless...
+			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
+					timer.now() - start).count() < TIMEOUT)
+			{
+				logger_->add("patience...",
+					logger::messageType::information,
+					logger::verbosity::low);
+
+				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			}*/
+
+			if (answered_)
+			{
+				logger_->add("query retrieved in " + boost::lexical_cast<std::string>(
+					boost::chrono::duration_cast<boost::chrono::milliseconds>(
+					timer.now() - start).count()) + " ms",
+					logger::messageType::information,
+					logger::verbosity::high);
+			}
+			else
+			{
+				logger_->add("query failed",
+					logger::messageType::error,
+					logger::verbosity::high);
+			}
+		}
+
+		return content_;
 	}
 
 	// callbacks
@@ -150,7 +195,7 @@ namespace connectors {
 		{
 			logger_->add("host successfully handchecked",
 				logger::messageType::information,
-				logger::verbosity::medium);
+				logger::verbosity::low);
 
 			boost::asio::async_write(socket_, request_,
 				boost::bind(&ssl::handle_write_request, this,
@@ -174,7 +219,7 @@ namespace connectors {
 		{
 			logger_->add("sending new request",
 				logger::messageType::information,
-				logger::verbosity::medium);
+				logger::verbosity::low);
 
 			boost::asio::async_read_until(socket_, response_, "\r\n",
 				boost::bind(&ssl::handle_read_status_line, this,
@@ -191,12 +236,14 @@ namespace connectors {
 	{
 		if (!err)
 		{
-			// Check that response is OK.
+			// Check that the response is OK.
 			std::istream response_stream(&response_);
 			std::string http_version;
 			response_stream >> http_version;
+
 			unsigned int status_code;
 			response_stream >> status_code;
+
 			std::string status_message;
 			std::getline(response_stream, status_message);
 			if (!response_stream || http_version.substr(0, 5) != "HTTP/")
@@ -256,6 +303,30 @@ namespace connectors {
 					boost::asio::placeholders::error));
 		}
 		else
+		{
+			logger_->add("Error: " + err.message() + "\n",
+				logger::messageType::error,
+				logger::verbosity::high);
+		}
+	}
+	void ssl::handle_read_content(const boost::system::error_code& err)
+	{
+		if (!err)
+		{
+			// Write all of the data that has been read so far.
+			content_ << &response_;
+
+			// Continue reading remaining data until EOF.
+			boost::asio::async_read(socket_, response_,
+				boost::asio::transfer_at_least(1),
+				boost::bind(&ssl::handle_read_content, this,
+					boost::asio::placeholders::error));
+		}
+		else if (err == boost::asio::error::eof)
+		{
+			answered_ = true;
+		}
+		else if (err != boost::asio::error::eof)
 		{
 			logger_->add("Error: " + err.message() + "\n",
 				logger::messageType::error,

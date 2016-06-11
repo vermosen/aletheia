@@ -10,6 +10,7 @@
 
 #include "connector.hpp"
 #include "dataFile.hpp"
+#include "timeSeries.hpp"
 
 class dataSource
 {
@@ -21,7 +22,7 @@ public:
 
 	virtual ~dataSource() {};
 
-	virtual void getData() = 0;
+	virtual timeSeries<double> & getData() = 0;
 
 	//TODO: void getFileAsync()
 

@@ -19,13 +19,7 @@ namespace dataFiles {
 	public:
 		json();
 		virtual ~json();
-
-		virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss)
-		{
-			pt_ = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree);
-			boost::property_tree::read_json(ss, *pt_);
-			return pt_;
-		}
+		virtual void parse(std::stringstream & ss);
 
 		static registerType < dataFile, dataFile::type, json> enumRegister_;
 	};

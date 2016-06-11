@@ -19,7 +19,7 @@ namespace dataFiles {
 	public:
 		xml();
 		virtual ~xml();
-		virtual const boost::shared_ptr<boost::property_tree::ptree> parse(std::stringstream & ss);
+		virtual void parse(std::stringstream & ss);
 
 	private:
 		static registerType < dataFile, dataFile::type, xml> enumRegister_;
