@@ -18,20 +18,6 @@ int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
-		// test
-		std::vector<ptime> dt;
-		std::vector<double> data;
-
-		dt.push_back(ptime(date(2016, 01, 01)));
-		dt.push_back(ptime(date(2016, 01, 02)));
-
-		data.push_back(1.254);
-		data.push_back(2.265);
-
-		timeSeries<double> ts(dt, data);
-
-		// test
-
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
 
@@ -45,7 +31,7 @@ int main(int argc, char * argv[]) {
 		dataSources::quandl qdl(log);
 		qdl.token(tokenStr);
 		qdl.setQuery("RBA","FXRUKPS", start, end, dataFile::type::xml);
-		qdl.getData();
+		timeSeries<double> data = qdl.getData();
 		retVal = 0;
 
 	}
