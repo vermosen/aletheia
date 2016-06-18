@@ -17,7 +17,7 @@ template<>
 abstractFactory <dataFile, dataFile::type>::map_type *
 	abstractFactory <dataFile, dataFile::type>::map_ = 0;
 
-timeSeries<double> & dataFile::getData() { return ts_; }
+timeSeries<double> dataFile::getData() { return std::move(ts_); }
 
 std::ostream& operator<<(std::ostream& os, dataFile::type o)
 {

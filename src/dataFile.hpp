@@ -34,7 +34,7 @@ public:
 
 	dataFile() {};
 	virtual ~dataFile() {};
-	timeSeries<double> & getData();
+	timeSeries<double> getData();
 	virtual void parse(std::stringstream & ss) = 0;
 
 protected:

@@ -16,6 +16,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/completion_condition.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/chrono.hpp>
 
@@ -48,9 +49,9 @@ namespace connectors {
 		void handle_connect			(const boost::system::error_code&);
 		void handle_handshake		(const boost::system::error_code&);
 		void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
-		void handle_read_status_line(const boost::system::error_code& err);
-		void handle_read_headers	(const boost::system::error_code& err);
-		void handle_read_content	(const boost::system::error_code& err);
+		void handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred);
+		void handle_read_headers	(const boost::system::error_code& err, size_t bytes_transferred);
+		void handle_read_content	(const boost::system::error_code& err, size_t bytes_transferred);
 
 	private:
 		boost::asio::io_service service_;
@@ -61,13 +62,18 @@ namespace connectors {
 
 		std::string host_;
 		std::string port_;
+
+		std::stringstream testStr_;
 		std::stringstream content_;
 		std::stringstream header_;
-	    boost::asio::streambuf request_;
-	    boost::asio::streambuf response_;
+
+		char request_	[max_length];
+		char reply_		[max_length];
 
 	    bool ready_;
 		bool answered_;
+
+		bool test_;
 	};
 } /* namespace connector */
 

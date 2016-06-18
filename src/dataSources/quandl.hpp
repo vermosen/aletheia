@@ -47,7 +47,7 @@ namespace dataSources
 			if(start_)
 				ss << "&start_date=" << boost::gregorian::to_iso_extended_string(start_.get());
 
-			if (end_) {}
+			if (end_)
 				ss << "&end_date=" << boost::gregorian::to_iso_extended_string(end_.get());
 
 			return ss;
@@ -79,14 +79,13 @@ namespace dataSources
 
 		virtual ~quandl();
 
-		virtual timeSeries<double> & getData()
+		virtual timeSeries<double> getData()
 		{
 			boost::shared_ptr<dataFile> file =
 				abstractFactory<dataFile, dataFile::type>::createInstance(query_->type());
 
 			file->parse(connector_->getStream());
-
-			return file->getData();
+			return std::move(file->getData());
 		}
 
 		void printData(const boost::property_tree::ptree & pt)

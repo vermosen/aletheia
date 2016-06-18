@@ -11,6 +11,8 @@ namespace connectors {
 
 	ssl::ssl(const boost::shared_ptr<logger> & l, bool verifyHost)
 		: 	connector(l),
+			response_(max_length),
+			request_(max_length),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_),
@@ -111,7 +113,7 @@ namespace connectors {
 
 			this->connect();
 
-			/* should be useless...
+			// should be useless...
 			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
 					timer.now() - start).count() < TIMEOUT)
 			{
@@ -120,7 +122,7 @@ namespace connectors {
 					logger::verbosity::low);
 
 				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			}*/
+			}
 
 			if (answered_)
 			{
@@ -223,7 +225,8 @@ namespace connectors {
 
 			boost::asio::async_read_until(socket_, response_, "\r\n",
 				boost::bind(&ssl::handle_read_status_line, this,
-					boost::asio::placeholders::error));
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
 		}
 		else
 		{
@@ -232,7 +235,7 @@ namespace connectors {
 				logger::verbosity::high);
 		}
 	}
-	void ssl::handle_read_status_line(const boost::system::error_code& err)
+	void ssl::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
@@ -272,7 +275,8 @@ namespace connectors {
 			// Read the response headers, which are terminated by a blank line.
 			boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
 				boost::bind(&ssl::handle_read_headers, this,
-					boost::asio::placeholders::error));
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
 		}
 		else
 		{
@@ -281,26 +285,40 @@ namespace connectors {
 				logger::verbosity::high);
 		}
 	}
-	void ssl::handle_read_headers(const boost::system::error_code& err)
+	void ssl::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
 			// Process the response headers.
+			// response_ initial size is 1007 but only 568 'bytes_transferred'
+			// characters are the content of the header. The rest is garbage
 			std::istream response_stream(&response_);
 
-			// unload the stream until we reached the content (standalone empty line)
+			// unload the bufstream in header_ until we reached the content (standalone empty line)
+			// TODO: we may reach the end of the packet before the end of the header
 			std::string h; while (std::getline(response_stream, h) && h != "\r")
+			{
 				header_ << h;
+			}
 
-			// Write whatever content we already have to output.
-			if (response_.size() > 0)
+			// the rest of the message is the content but
+			// there are now 4 invalid characters to skip
+			if (response_.size() > 4)
+			{
+				response_.consume(4);
 				content_ << &response_;
+			}
+
+
+			//std::cout << std::endl;
+			//std::cout << content_.str() << std::endl;
 
 			// Start reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
 				boost::asio::transfer_at_least(1),
 				boost::bind(&ssl::handle_read_content, this,
-					boost::asio::placeholders::error));
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
 		}
 		else
 		{
@@ -309,18 +327,34 @@ namespace connectors {
 				logger::verbosity::high);
 		}
 	}
-	void ssl::handle_read_content(const boost::system::error_code& err)
+	void ssl::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
-			// Write all of the data that has been read so far.
-			content_ << &response_;
+			if (test_)
+			{
+				response_.commit(0);
+				testStr_ << &response_;
+				std::cout << testStr_.str() << std::endl;
+			}
+
+			// if the streambuf size is different from bytes transfert,
+			// we want to purge the remaining chars
+			if (bytes_transferred != max_length)
+			{
+				test_ = true;
+			}
+			else
+			{
+				content_ << &response_;
+			}
 
 			// Continue reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
 				boost::asio::transfer_at_least(1),
 				boost::bind(&ssl::handle_read_content, this,
-					boost::asio::placeholders::error));
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
 		}
 		else if (err == boost::asio::error::eof)
 		{

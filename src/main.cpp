@@ -25,13 +25,14 @@ int main(int argc, char * argv[]) {
 
 		// start end dates
 		boost::optional<date> start = date(2000, Jan, 01);
-		boost::optional<date> end = date(2000, Feb, 01);
+		boost::optional<date> end = date(2002, Jan, 01);
 
 		// new data source
 		dataSources::quandl qdl(log);
 		qdl.token(tokenStr);
 		qdl.setQuery("RBA","FXRUKPS", start, end, dataFile::type::xml);
 		timeSeries<double> data = qdl.getData();
+
 		retVal = 0;
 
 	}
