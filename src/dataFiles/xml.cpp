@@ -24,14 +24,7 @@ namespace dataFiles {
 
 	void xml::parse(std::stringstream & ss) {
 
-		std::ofstream o("/tmp/test2.xml", std::ios::out);
-
-		o << ss.rdbuf();
-		o.close();
-
-		ptree pt;
-
-		read_xml(ss, pt, xml_parser::trim_whitespace | xml_parser::no_comments);
+		ptree pt; read_xml(ss, pt, xml_parser::trim_whitespace | xml_parser::no_comments);
 
 		for (auto& item : pt.get_child("quandl-response.dataset.data"))
 		{
@@ -53,6 +46,4 @@ namespace dataFiles {
 			}
 		}
 	}
-
-
 } /* namespace dataFile */

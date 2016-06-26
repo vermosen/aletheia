@@ -34,7 +34,10 @@
 								<option id="gnu.cpp.compiler.option.other.other.597974076" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.776141117" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/postgresql/"/>
+									<listOptionValue builtIn="false" value="/usr/local/include/soci/"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.warnings.allwarn.502493580" name="All warnings (-Wall)" superClass="gnu.cpp.compiler.option.warnings.allwarn" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.480638723" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.217510695" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
@@ -48,8 +51,12 @@
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_filesystem"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
+									<listOptionValue builtIn="false" value="soci_core"/>
+									<listOptionValue builtIn="false" value="soci_postgresql"/>
 								</option>
-								<option id="gnu.cpp.link.option.paths.1082162306" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths"/>
+								<option id="gnu.cpp.link.option.paths.1082162306" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/usr/local/lib64"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1837781255" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

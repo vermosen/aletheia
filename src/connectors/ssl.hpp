@@ -12,6 +12,7 @@
 #include <fstream>
 
 #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -44,14 +45,14 @@ namespace connectors {
 
 	private:
 		// client callbacks
-		bool handle_checkCertificate(bool preverified, boost::asio::ssl::verify_context&);
+		bool handle_checkCertificate(bool, boost::asio::ssl::verify_context&);
 		void handle_resolve			(const boost::system::error_code&, boost::asio::ip::tcp::resolver::iterator);
 		void handle_connect			(const boost::system::error_code&);
 		void handle_handshake		(const boost::system::error_code&);
-		void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
-		void handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred);
-		void handle_read_headers	(const boost::system::error_code& err, size_t bytes_transferred);
-		void handle_read_content	(const boost::system::error_code& err, size_t bytes_transferred);
+		void handle_write_request	(const boost::system::error_code&, size_t);
+		void handle_read_status_line(const boost::system::error_code&, size_t);
+		void handle_read_headers	(const boost::system::error_code&, size_t);
+		void handle_read_content	(const boost::system::error_code&, size_t);
 
 	private:
 		boost::asio::io_service service_;
@@ -63,17 +64,23 @@ namespace connectors {
 		std::string host_;
 		std::string port_;
 
-		std::stringstream testStr_;
+
 		std::stringstream content_;
 		std::stringstream header_;
 
-		char request_	[max_length];
-		char reply_		[max_length];
+		boost::asio::streambuf request_;
+	    boost::asio::streambuf response_;
 
 	    bool ready_;
-		bool answered_;
+	    bool success_;
+	    bool test_ = false;
 
-		bool test_;
+	    // for async controls
+	    boost::mutex 				ioMutex_	;
+	    boost::condition_variable 	condition_	;
+		boost::atomic<bool> 		answered_	;
+
+
 	};
 } /* namespace connector */
 

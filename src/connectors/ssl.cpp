@@ -17,7 +17,8 @@ namespace connectors {
 			resolver_(service_),
 			socket_(service_, context_),
 			ready_(false),
-			answered_(false)
+			answered_(false),
+			success_(false)
 	{
 
 		// load the certificate from default
@@ -86,9 +87,11 @@ namespace connectors {
 		}
 		catch(std::exception & ex)
 		{
-			logger_->add("error while creating nez query",
+			logger_->add("error while creating the query",
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			ready_ = false;
 		}
 	}
 
@@ -110,21 +113,17 @@ namespace connectors {
 		{
 			boost::chrono::high_resolution_clock timer;
 			boost::chrono::time_point<boost::chrono::high_resolution_clock> start = timer.now();
-
+			boost::mutex::scoped_lock lock(ioMutex_);
 			this->connect();
 
 			// should be useless...
 			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
 					timer.now() - start).count() < TIMEOUT)
 			{
-				logger_->add("patience...",
-					logger::messageType::information,
-					logger::verbosity::low);
-
-				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+				condition_.wait(lock);
 			}
 
-			if (answered_)
+			if (success_)
 			{
 				logger_->add("query retrieved in " + boost::lexical_cast<std::string>(
 					boost::chrono::duration_cast<boost::chrono::milliseconds>(
@@ -174,6 +173,8 @@ namespace connectors {
 			logger_->add("Error resolving host address:\r\n" + err.message(),
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_connect(const boost::system::error_code& err)
@@ -189,6 +190,8 @@ namespace connectors {
 			logger_->add("Error connecting host:\r\n" + err.message(),
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_handshake(const boost::system::error_code& err)
@@ -209,6 +212,8 @@ namespace connectors {
 			logger_->add("Error performing handshake:\r\n" + err.message(),
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
@@ -233,6 +238,8 @@ namespace connectors {
 			logger_->add("Error writing query:\r\n" + err.message(),
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
@@ -255,6 +262,7 @@ namespace connectors {
 					logger::messageType::error,
 					logger::verbosity::high);
 
+				condition_.notify_one(); answered_ = true;
 				return;
 			}
 			if (status_code != 200)
@@ -264,6 +272,7 @@ namespace connectors {
 					logger::messageType::error,
 					logger::verbosity::high);
 
+				condition_.notify_one(); answered_ = true;
 				return;
 			}
 
@@ -283,6 +292,8 @@ namespace connectors {
 			logger_->add("Error: " + err.message() + "\n",
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
@@ -290,8 +301,6 @@ namespace connectors {
 		if (!err)
 		{
 			// Process the response headers.
-			// response_ initial size is 1007 but only 568 'bytes_transferred'
-			// characters are the content of the header. The rest is garbage
 			std::istream response_stream(&response_);
 
 			// unload the bufstream in header_ until we reached the content (standalone empty line)
@@ -301,17 +310,13 @@ namespace connectors {
 				header_ << h;
 			}
 
-			// the rest of the message is the content but
-			// there are now 4 invalid characters to skip
-			if (response_.size() > 4)
-			{
-				response_.consume(4);
-				content_ << &response_;
-			}
+			// the rest of the message is the content
+			boost::asio::streambuf::const_buffers_type bufs = response_.data();
+			content_ << std::string(boost::asio::buffers_begin(bufs),
+					boost::asio::buffers_begin(bufs) + response_.size());
 
-
-			//std::cout << std::endl;
-			//std::cout << content_.str() << std::endl;
+			response_.consume(max_length);
+			response_.prepare(max_length);
 
 			// Start reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
@@ -325,46 +330,53 @@ namespace connectors {
 			logger_->add("Error: " + err.message() + "\n",
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 	void ssl::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
+			boost::asio::streambuf::const_buffers_type bufs = response_.data();
+			content_ << std::string(boost::asio::buffers_begin(bufs),
+					boost::asio::buffers_begin(bufs) + bytes_transferred);
+
+			response_.consume(max_length);
+			response_.prepare(max_length);
+
 			if (test_)
 			{
-				response_.commit(0);
-				testStr_ << &response_;
-				std::cout << testStr_.str() << std::endl;
+				std::cout << content_.str() << std::endl;
+				test_ = false;
 			}
 
-			// if the streambuf size is different from bytes transfert,
-			// we want to purge the remaining chars
-			if (bytes_transferred != max_length)
+			if (bytes_transferred != 1024)
 			{
 				test_ = true;
 			}
-			else
-			{
-				content_ << &response_;
-			}
+
 
 			// Continue reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
-				boost::asio::transfer_at_least(1),
+					boost::asio::transfer_at_least(1),
 				boost::bind(&ssl::handle_read_content, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred));
+
 		}
 		else if (err == boost::asio::error::eof)
 		{
-			answered_ = true;
+			success_ = true;
+			condition_.notify_one(); answered_ = true;
 		}
 		else if (err != boost::asio::error::eof)
 		{
 			logger_->add("Error: " + err.message() + "\n",
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			condition_.notify_one(); answered_ = true;
 		}
 	}
 
