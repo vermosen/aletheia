@@ -15,10 +15,7 @@ namespace connectors {
 			request_(max_length),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
-			socket_(service_, context_),
-			ready_(false),
-			answered_(false),
-			success_(false)
+			socket_(service_, context_)
 	{
 
 		// load the certificate from default
@@ -307,16 +304,21 @@ namespace connectors {
 			// TODO: we may reach the end of the packet before the end of the header
 			std::string h; while (std::getline(response_stream, h) && h != "\r")
 			{
+				// TODO: use regex for the space
+				if (h.find("transfer-encoding: chunked") != std::string::npos) chunked_ = true;
 				header_ << h;
 			}
 
-			// the rest of the message is the content
-			boost::asio::streambuf::const_buffers_type bufs = response_.data();
-			content_ << std::string(boost::asio::buffers_begin(bufs),
-					boost::asio::buffers_begin(bufs) + response_.size());
+			// if chuncked, read the buffer until next end-of-line
+			if (chunked_)
+			{
+				std::getline(response_stream, h);
+				std::stringstream ss;
+				ss << std::hex << h.substr(0, h.size()-1);
+				ss >> chunckSize_;
+			}
 
-			response_.consume(max_length);
-			response_.prepare(max_length);
+			content_ << &response_;
 
 			// Start reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
@@ -338,24 +340,30 @@ namespace connectors {
 	{
 		if (!err)
 		{
-			boost::asio::streambuf::const_buffers_type bufs = response_.data();
-			content_ << std::string(boost::asio::buffers_begin(bufs),
-					boost::asio::buffers_begin(bufs) + bytes_transferred);
-
-			response_.consume(max_length);
-			response_.prepare(max_length);
-
-			if (test_)
+			int tt = content_.tellp();
+			if (content_.tellp() == chunckSize_ + 2)
 			{
-				std::cout << content_.str() << std::endl;
-				test_ = false;
-			}
+				// roll back the cursor by 2 char if ==
+				content_.seekp(-2, std::ios_base::end);
 
-			if (bytes_transferred != 1024)
+				std::istream response_stream(&response_);
+				std::string h;
+				std::getline(response_stream, h);
+				std::stringstream ss;
+				int temp = 0;
+				ss << std::hex << h.substr(0, h.size()-1);
+				ss >> temp;
+				chunckSize_ += temp;
+				content_ << &response_;
+			}
+			else if(content_.tellp() >= chunckSize_ + 2)
 			{
-				test_ = true;
+				// TODO: the chunk is inside the message
 			}
-
+			else
+			{
+				content_ << &response_;
+			}
 
 			// Continue reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,

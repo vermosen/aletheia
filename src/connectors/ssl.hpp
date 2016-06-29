@@ -73,7 +73,10 @@ namespace connectors {
 
 	    bool ready_;
 	    bool success_;
-	    bool test_ = false;
+
+	    // for chucks management
+	    bool chunked_;
+	    int chunckSize_;
 
 	    // for async controls
 	    boost::mutex 				ioMutex_	;

@@ -21,7 +21,7 @@ int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
-		/*boost::shared_ptr<logger> log(
+		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
 
 		// step 1: retrieve from quandl
@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
 
 		// start end dates
 		boost::optional<date> start = date(2000, Jan, 01);
-		boost::optional<date> end = date(2000, Feb, 01);
+		boost::optional<date> end = date(2005, Feb, 01);
 
 		// new data source
 		dataSources::quandl qdl(log);
@@ -39,13 +39,7 @@ int main(int argc, char * argv[]) {
 
 		timeSeries<double> data = qdl.getData();
 
-		std::cout << "retrieved " << data.size() << " data points from Quandl" << std::endl;*/
-
-		timeSeries<double> data;
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.125));
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 02)), 0.110));
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 03)), 0.154));
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 04)), 0.124));
+		/*std::cout << "retrieved " << data.size() << " data points from Quandl" << std::endl;
 
 		// step 2: write in db
 		soci::session sql(soci::postgresql, "user=postgres password=1234 host=localhost port=5432 dbname=aletheia");
@@ -62,7 +56,7 @@ int main(int argc, char * argv[]) {
 		"value REAL NOT NULL" 		<<
 		");");
 
-		st2.execute(true);
+		st2.execute(true);*/
 
 		retVal = 0;
 
