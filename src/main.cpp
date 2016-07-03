@@ -19,6 +19,20 @@
 using namespace boost::gregorian;
 using namespace boost::posix_time;
 
+class dbDesign : public database::design
+{
+public:
+	dbDesign()
+	{
+		tables_.push_back("timeSeries");
+		tables_.push_back("index");
+		tables_.push_back("source");
+		tables_.push_back("quandl");
+
+		// TODO: keys
+	}
+};
+
 int main(int argc, char * argv[]) {
 
 	int retVal; try
@@ -26,7 +40,6 @@ int main(int argc, char * argv[]) {
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
 
-		bool rebuildDb = false;
 		/*
 		// step 1: retrieve from quandl
 		//std::string tokenStr = "4jufXHL8S4XxyM6gzbA_";
@@ -45,15 +58,13 @@ int main(int argc, char * argv[]) {
 
 		std::cout << "retrieved " << data.size() << " data points from Quandl" << std::endl;*/
 
-		// test
-		timeSeries<double> data;
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.01));
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 02)), 0.02));
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 03)), 0.03));
-
 		// step 2: write in db
+
+		boost::shared_ptr<database::design> des(
+			new dbDesign());
+
 		boost::shared_ptr<database::database> db(
-			new database::postGreSqlDatabase());
+			new database::postGreSqlDatabase(des, log));
 
 		db->connect("user=postgres password=1234 host=localhost port=5432 dbname=aletheia");
 
@@ -62,6 +73,12 @@ int main(int argc, char * argv[]) {
 			db->rebuild();
 		}
 
+
+		// test
+		timeSeries<double> data;
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.01));
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 02)), 0.02));
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 03)), 0.03));
 
 		retVal = 0;
 

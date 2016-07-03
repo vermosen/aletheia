@@ -29,12 +29,14 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
  /usr/local/include/soci/unsigned-types.h \
  /usr/local/include/soci/values.h \
  /usr/local/include/soci/values-exchange.h \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp \
  /usr/local/include/soci/postgresql/common.h \
  /usr/local/include/soci/postgresql/soci-postgresql.h \
  /usr/local/include/soci/soci-backend.h \
  /usr/include/postgresql/libpq-fe.h \
  /usr/include/postgresql/postgres_ext.h \
- /usr/include/postgresql/pg_config_ext.h
+ /usr/include/postgresql/pg_config_ext.h \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp
 
 /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp:
 
@@ -114,6 +116,8 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
 
 /usr/local/include/soci/values-exchange.h:
 
+/home/vermosen/eclipse/aletheia/src/logger.hpp:
+
 /usr/local/include/soci/postgresql/common.h:
 
 /usr/local/include/soci/postgresql/soci-postgresql.h:
@@ -125,3 +129,5 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
 /usr/include/postgresql/postgres_ext.h:
 
 /usr/include/postgresql/pg_config_ext.h:
+
+/home/vermosen/eclipse/aletheia/src/logger.hpp:

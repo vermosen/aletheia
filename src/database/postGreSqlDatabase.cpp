@@ -9,7 +9,7 @@
 
 namespace database
 {
-	postGreSqlConnector::postGreSqlConnector()
+	postGreSqlConnector::postGreSqlConnector(boost::shared_ptr<logger> log) : connector(log)
 	{
 		// TODO Auto-generated constructor stub
 
@@ -26,9 +26,11 @@ namespace database
 			new soci::session(soci::postgresql, connectionString));
 	}
 
-	postGreSqlDatabase::postGreSqlDatabase()
+	postGreSqlDatabase::postGreSqlDatabase(boost::shared_ptr<design> des, boost::shared_ptr<logger> log)
+		: database(des, log)
 	{
 		// TODO Auto-generated constructor stub
+		connector_ = boost::shared_ptr<connector>(new postGreSqlConnector(log));
 
 	}
 
@@ -39,51 +41,73 @@ namespace database
 
 	bool postGreSqlDatabase::checkStatus() const
 	{
-		std::string tableName;
-
-		soci::statement st = (connector_->session()->prepare
-						<< "SELECT TABLE_NAME "
-						<< "FROM INFORMATION_SCHEMA.TABLES",
-							soci::into(tableName));
-
-		st.execute(true);
-		bool foundData = false;
-		bool foundIndex = false;
-
-		while (st.fetch())
+		try
 		{
-			if (tableName == "timeSeries") foundData = true;
-			if (tableName == "index") foundIndex = true;
+			std::string tableName;
+
+			soci::statement st = (connector_->session()->prepare
+							<< "SELECT TABLE_NAME "
+							<< "FROM INFORMATION_SCHEMA.TABLES",
+								soci::into(tableName));
+
+			st.execute(true);
+
+			std::vector<bool> tests; tests.reserve(design_->tables_.size());
+			for (size_t i = 0; i < design_->tables_.size(); i++)
+			{
+				tests.push_back(false);
+			}
+
+			std::vector<std::string> names;
+
+			while (st.fetch())
+			{
+				auto it = std::find(
+						design_->tables_.cbegin(),
+						design_->tables_.cend(), tableName);
+
+				if (it != design_->tables_.cend())
+				{
+					tests[std::distance(design_->tables_.cbegin(), it)] = true;
+				}
+			}
+
+			if (std::find(tests.cbegin(), tests.cend(), false) != tests.cend())
+			{
+				return false;
+			}
 		}
-		if (!foundData || !foundIndex)
+		catch(const std::exception & ex)
 		{
-			return false;
+			log_->add("an error has occured",
+				logger::messageType::error,
+				logger::verbosity::high);
 		}
-		else
-		{
-			return true;
-		}
+
 	}
 
 	void postGreSqlDatabase::rebuild()
 	{
 		try
 		{
-			soci::statement st = (connector_->session()->prepare << "DROP TABLE example");
-			st.execute(true);
-			st = (connector_->session()->prepare << "DROP TABLE timeSeries");
-			st.execute(true);
-			st = (connector_->session()->prepare << "DROP TABLE index");
-			st.execute(true);
-			st = (connector_->session()->prepare << "DROP TABLE source");
-			st.execute(true);
+			soci::statement st = (connector_->session()->prepare << "");
+			for(auto it = design_->tables_.cbegin(); it != design_->tables_.cend(); it++)
+			{
+				try
+				{
+					st = (connector_->session()->prepare << "DROP TABLE " + *it);
+					st.execute(true);
+				}
+				catch(...) {}
+			}
 
+			// TODO: add table structure in description
 			st = (connector_->session()->prepare
 				<< "CREATE TABLE index"
 				<< "("
 				<< "id SERIAL PRIMARY KEY,"
 				<< "source INTEGER NOT NULL,"
-				<< "desc VARCHAR(250)"
+				<< "description VARCHAR(250)"
 				<< ");");
 
 			st.execute(true);
@@ -119,15 +143,17 @@ namespace database
 			st = (connector_->session()->prepare
 				<< "ALTER TABLE index"
 				<< " ADD CONSTRAINT fk_source_index"
-				<< " FOREIGN KEY (index)"
-				<< " REFERENCES index(id);");
+				<< " FOREIGN KEY (source)"
+				<< " REFERENCES source(id);");
 
 			st.execute(true);
 
 		}
 		catch(std::exception & ex)
 		{
-
+			log_->add("an error has occured",
+				logger::messageType::error,
+				logger::verbosity::high);
 		}
 	}
 }
