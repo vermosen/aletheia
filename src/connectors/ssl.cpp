@@ -11,8 +11,6 @@ namespace connectors {
 
 	ssl::ssl(const boost::shared_ptr<logger> & l, bool verifyHost)
 		: 	connector(l),
-			response_(max_length),
-			request_(max_length),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_)
@@ -137,6 +135,39 @@ namespace connectors {
 		}
 
 		return content_;
+	}
+
+	void ssl::unckunck(boost::asio::streambuf & buf)
+	{
+		bool start = true;
+		std::string c;
+
+		std::istream istr(&buf);
+		istr >> std::noskipws;
+
+		while (istr)
+		{
+			std::string h;
+			if (!start)
+			{
+				std::getline(istr, h);
+			}
+			else
+			{
+				start = false;
+			}
+
+			std::getline(istr, h);
+			std::stringstream ss;
+			ss << std::hex << h.substr(0, h.size()-1);
+			ss >> chunckSize_;
+
+			std::istream_iterator<char> beg(istr);
+
+			std::copy_n(beg, chunckSize_, std::back_inserter(c));
+		}
+
+		content_ << c;
 	}
 
 	// callbacks
@@ -309,17 +340,6 @@ namespace connectors {
 				header_ << h;
 			}
 
-			// if chuncked, read the buffer until next end-of-line
-			if (chunked_)
-			{
-				std::getline(response_stream, h);
-				std::stringstream ss;
-				ss << std::hex << h.substr(0, h.size()-1);
-				ss >> chunckSize_;
-			}
-
-			content_ << &response_;
-
 			// Start reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
 				boost::asio::transfer_at_least(1),
@@ -340,31 +360,6 @@ namespace connectors {
 	{
 		if (!err)
 		{
-			int tt = content_.tellp();
-			if (content_.tellp() == chunckSize_ + 2)
-			{
-				// roll back the cursor by 2 char if ==
-				content_.seekp(-2, std::ios_base::end);
-
-				std::istream response_stream(&response_);
-				std::string h;
-				std::getline(response_stream, h);
-				std::stringstream ss;
-				int temp = 0;
-				ss << std::hex << h.substr(0, h.size()-1);
-				ss >> temp;
-				chunckSize_ += temp;
-				content_ << &response_;
-			}
-			else if(content_.tellp() >= chunckSize_ + 2)
-			{
-				// TODO: the chunk is inside the message
-			}
-			else
-			{
-				content_ << &response_;
-			}
-
 			// Continue reading remaining data until EOF.
 			boost::asio::async_read(socket_, response_,
 					boost::asio::transfer_at_least(1),
@@ -375,6 +370,15 @@ namespace connectors {
 		}
 		else if (err == boost::asio::error::eof)
 		{
+			if (chunked_)
+			{
+				unckunck(response_);
+			}
+			else
+			{
+				content_ << &response_;
+			}
+
 			success_ = true;
 			condition_.notify_one(); answered_ = true;
 		}

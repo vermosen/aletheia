@@ -14,6 +14,8 @@
 #include "dataSources/quandl.hpp"
 #include "timeSeries.hpp"
 
+#include "database/postGreSqlDatabase.hpp"
+
 using namespace boost::gregorian;
 using namespace boost::posix_time;
 
@@ -24,6 +26,8 @@ int main(int argc, char * argv[]) {
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
 
+		bool rebuildDb = false;
+		/*
 		// step 1: retrieve from quandl
 		//std::string tokenStr = "4jufXHL8S4XxyM6gzbA_";
 		std::string tokenStr = "H8VUjcUPEFHK_mFnjXp1";
@@ -39,24 +43,25 @@ int main(int argc, char * argv[]) {
 
 		timeSeries<double> data = qdl.getData();
 
-		/*std::cout << "retrieved " << data.size() << " data points from Quandl" << std::endl;
+		std::cout << "retrieved " << data.size() << " data points from Quandl" << std::endl;*/
+
+		// test
+		timeSeries<double> data;
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.01));
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 02)), 0.02));
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 03)), 0.03));
 
 		// step 2: write in db
-		soci::session sql(soci::postgresql, "user=postgres password=1234 host=localhost port=5432 dbname=aletheia");
+		boost::shared_ptr<database::database> db(
+			new database::postGreSqlDatabase());
 
-		soci::statement st = (sql.prepare << "DROP TABLE example");
-		st.execute(true);
+		db->connect("user=postgres password=1234 host=localhost port=5432 dbname=aletheia");
 
-		soci::statement st2 = (sql.prepare <<
-		"CREATE TABLE example" 		<<
-		"("							<<
-		"id BIGSERIAL PRIMARY KEY," <<
-		"index INTEGER NOT NULL," 	<<
-		"date TIMESTAMP NOT NULL," 	<<
-		"value REAL NOT NULL" 		<<
-		");");
+		if(!db->checkStatus())
+		{
+			db->rebuild();
+		}
 
-		st2.execute(true);*/
 
 		retVal = 0;
 

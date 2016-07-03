@@ -46,7 +46,8 @@ src/main.d: ../src/main.cpp /usr/local/include/soci/soci.h \
  /home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp \
  /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
  /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp \
- ../src/timeSeries.hpp
+ ../src/timeSeries.hpp ../src/database/postGreSqlDatabase.hpp \
+ /home/vermosen/eclipse/aletheia/src/database.hpp
 
 /usr/local/include/soci/soci.h:
 
@@ -163,3 +164,7 @@ src/main.d: ../src/main.cpp /usr/local/include/soci/soci.h \
 /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp:
 
 ../src/timeSeries.hpp:
+
+../src/database/postGreSqlDatabase.hpp:
+
+/home/vermosen/eclipse/aletheia/src/database.hpp:

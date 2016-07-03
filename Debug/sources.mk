@@ -25,6 +25,7 @@ C_UPPER_DEPS :=
 SUBDIRS := \
 src \
 src/loggers \
+src/database \
 src/dataSources \
 src/dataFiles \
 src/connectors \

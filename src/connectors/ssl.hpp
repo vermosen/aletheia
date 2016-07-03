@@ -44,6 +44,8 @@ namespace connectors {
 		virtual std::stringstream & getStream();
 
 	private:
+		void unckunck(boost::asio::streambuf & buf);
+
 		// client callbacks
 		bool handle_checkCertificate(bool, boost::asio::ssl::verify_context&);
 		void handle_resolve			(const boost::system::error_code&, boost::asio::ip::tcp::resolver::iterator);
