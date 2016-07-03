@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/dataFile.cpp \
+../src/database.cpp \
 ../src/main.cpp 
 
 OBJS += \
 ./src/dataFile.o \
+./src/database.o \
 ./src/main.o 
 
 CPP_DEPS += \
 ./src/dataFile.d \
+./src/database.d \
 ./src/main.d 
 
 

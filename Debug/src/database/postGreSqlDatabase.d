@@ -1,6 +1,5 @@
 src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
  /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp \
- /home/vermosen/eclipse/aletheia/src/database.hpp \
  /usr/local/include/soci/soci.h /usr/local/include/soci/backend-loader.h \
  /usr/local/include/soci/soci-backend.h \
  /usr/local/include/soci/soci-config.h /usr/local/include/soci/error.h \
@@ -29,18 +28,17 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
  /usr/local/include/soci/unsigned-types.h \
  /usr/local/include/soci/values.h \
  /usr/local/include/soci/values-exchange.h \
- /home/vermosen/eclipse/aletheia/src/logger.hpp \
  /usr/local/include/soci/postgresql/common.h \
  /usr/local/include/soci/postgresql/soci-postgresql.h \
  /usr/local/include/soci/soci-backend.h \
  /usr/include/postgresql/libpq-fe.h \
  /usr/include/postgresql/postgres_ext.h \
  /usr/include/postgresql/pg_config_ext.h \
+ /home/vermosen/eclipse/aletheia/src/database.hpp \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp \
  /home/vermosen/eclipse/aletheia/src/logger.hpp
 
 /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp:
-
-/home/vermosen/eclipse/aletheia/src/database.hpp:
 
 /usr/local/include/soci/soci.h:
 
@@ -116,8 +114,6 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
 
 /usr/local/include/soci/values-exchange.h:
 
-/home/vermosen/eclipse/aletheia/src/logger.hpp:
-
 /usr/local/include/soci/postgresql/common.h:
 
 /usr/local/include/soci/postgresql/soci-postgresql.h:
@@ -129,5 +125,9 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
 /usr/include/postgresql/postgres_ext.h:
 
 /usr/include/postgresql/pg_config_ext.h:
+
+/home/vermosen/eclipse/aletheia/src/database.hpp:
+
+/home/vermosen/eclipse/aletheia/src/logger.hpp:
 
 /home/vermosen/eclipse/aletheia/src/logger.hpp:

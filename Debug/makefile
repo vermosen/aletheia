@@ -9,6 +9,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include src/loggers/subdir.mk
+-include src/database/postGreSqlDatabase/subdir.mk
 -include src/database/subdir.mk
 -include src/dataSources/subdir.mk
 -include src/dataFiles/subdir.mk

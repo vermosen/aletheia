@@ -5,41 +5,27 @@
 // Description : Download data from quandl website, Ansi-style
 //============================================================================
 
-#include <iostream>
 
-#include <soci.h>
-#include <postgresql/common.h>
+#include <iostream>
 
 #include "loggers/consoleLogger.hpp"
 #include "dataSources/quandl.hpp"
 #include "timeSeries.hpp"
 
 #include "database/postGreSqlDatabase.hpp"
+#include "database/postGreSqlDatabase/aletheiaDesigner.hpp"
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
-
-class dbDesign : public database::design
-{
-public:
-	dbDesign()
-	{
-		tables_.push_back("timeSeries");
-		tables_.push_back("index");
-		tables_.push_back("source");
-		tables_.push_back("quandl");
-
-		// TODO: keys
-	}
-};
 
 int main(int argc, char * argv[]) {
 
 	int retVal; try
 	{
+		bool forceRebuild = false;
+
 		boost::shared_ptr<logger> log(
 			new loggers::consoleLogger(logger::verbosity::low));
-
 		/*
 		// step 1: retrieve from quandl
 		//std::string tokenStr = "4jufXHL8S4XxyM6gzbA_";
@@ -60,23 +46,22 @@ int main(int argc, char * argv[]) {
 
 		// step 2: write in db
 
-		boost::shared_ptr<database::design> des(
-			new dbDesign());
-
-		boost::shared_ptr<database::database> db(
-			new database::postGreSqlDatabase(des, log));
+		boost::shared_ptr<db::designer> design(new db::aletheiaDesigner());
+		boost::shared_ptr<db::database> db(new db::postGreSqlDatabase(design, log));
 
 		db->connect("user=postgres password=1234 host=localhost port=5432 dbname=aletheia");
 
-		if(!db->checkStatus())
+		if(!db->checkStatus() || forceRebuild)
 		{
 			db->rebuild();
 		}
 
+		// try to insert a new record on quandl table
+
 
 		// test
 		timeSeries<double> data;
-		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.01));
+		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 01)), 0.03));
 		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 02)), 0.02));
 		data.push_back(std::pair<ptime, double>(ptime(date(2000, Jan, 03)), 0.03));
 

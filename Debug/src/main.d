@@ -1,5 +1,19 @@
-src/main.d: ../src/main.cpp /usr/local/include/soci/soci.h \
- /usr/local/include/soci/backend-loader.h \
+src/main.d: ../src/main.cpp ../src/loggers/consoleLogger.hpp \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp \
+ ../src/dataSources/quandl.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataSource.hpp \
+ /home/vermosen/eclipse/aletheia/src/connector.hpp \
+ /home/vermosen/eclipse/aletheia/src/logger.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
+ /home/vermosen/eclipse/aletheia/src/timeSeries.hpp \
+ /home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp \
+ /home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp \
+ /home/vermosen/eclipse/aletheia/src/connector.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
+ /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp \
+ ../src/timeSeries.hpp ../src/database/postGreSqlDatabase.hpp \
+ /usr/local/include/soci/soci.h /usr/local/include/soci/backend-loader.h \
  /usr/local/include/soci/soci-backend.h \
  /usr/local/include/soci/soci-config.h /usr/local/include/soci/error.h \
  /usr/local/include/soci/blob.h /usr/local/include/soci/blob-exchange.h \
@@ -32,22 +46,42 @@ src/main.d: ../src/main.cpp /usr/local/include/soci/soci.h \
  /usr/local/include/soci/soci-backend.h \
  /usr/include/postgresql/libpq-fe.h \
  /usr/include/postgresql/postgres_ext.h \
- /usr/include/postgresql/pg_config_ext.h ../src/loggers/consoleLogger.hpp \
- /home/vermosen/eclipse/aletheia/src/logger.hpp \
- ../src/dataSources/quandl.hpp \
- /home/vermosen/eclipse/aletheia/src/dataSource.hpp \
- /home/vermosen/eclipse/aletheia/src/connector.hpp \
- /home/vermosen/eclipse/aletheia/src/logger.hpp \
- /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
- /home/vermosen/eclipse/aletheia/src/timeSeries.hpp \
- /home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp \
- /home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp \
- /home/vermosen/eclipse/aletheia/src/connector.hpp \
- /home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp \
- /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
- /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp \
- ../src/timeSeries.hpp ../src/database/postGreSqlDatabase.hpp \
- /home/vermosen/eclipse/aletheia/src/database.hpp
+ /usr/include/postgresql/pg_config_ext.h \
+ /home/vermosen/eclipse/aletheia/src/database.hpp \
+ ../src/database/postGreSqlDatabase/aletheiaDesigner.hpp \
+ /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp
+
+../src/loggers/consoleLogger.hpp:
+
+/home/vermosen/eclipse/aletheia/src/logger.hpp:
+
+../src/dataSources/quandl.hpp:
+
+/home/vermosen/eclipse/aletheia/src/dataSource.hpp:
+
+/home/vermosen/eclipse/aletheia/src/connector.hpp:
+
+/home/vermosen/eclipse/aletheia/src/logger.hpp:
+
+/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
+
+/home/vermosen/eclipse/aletheia/src/timeSeries.hpp:
+
+/home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp:
+
+/home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp:
+
+/home/vermosen/eclipse/aletheia/src/connector.hpp:
+
+/home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp:
+
+/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
+
+/home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp:
+
+../src/timeSeries.hpp:
+
+../src/database/postGreSqlDatabase.hpp:
 
 /usr/local/include/soci/soci.h:
 
@@ -135,36 +169,8 @@ src/main.d: ../src/main.cpp /usr/local/include/soci/soci.h \
 
 /usr/include/postgresql/pg_config_ext.h:
 
-../src/loggers/consoleLogger.hpp:
-
-/home/vermosen/eclipse/aletheia/src/logger.hpp:
-
-../src/dataSources/quandl.hpp:
-
-/home/vermosen/eclipse/aletheia/src/dataSource.hpp:
-
-/home/vermosen/eclipse/aletheia/src/connector.hpp:
-
-/home/vermosen/eclipse/aletheia/src/logger.hpp:
-
-/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
-
-/home/vermosen/eclipse/aletheia/src/timeSeries.hpp:
-
-/home/vermosen/eclipse/aletheia/src/patterns/abstractFactory.hpp:
-
-/home/vermosen/eclipse/aletheia/src/connectors/ssl.hpp:
-
-/home/vermosen/eclipse/aletheia/src/connector.hpp:
-
-/home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp:
-
-/home/vermosen/eclipse/aletheia/src/dataFile.hpp:
-
-/home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp:
-
-../src/timeSeries.hpp:
-
-../src/database/postGreSqlDatabase.hpp:
-
 /home/vermosen/eclipse/aletheia/src/database.hpp:
+
+../src/database/postGreSqlDatabase/aletheiaDesigner.hpp:
+
+/home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp:

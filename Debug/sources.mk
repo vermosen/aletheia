@@ -26,6 +26,7 @@ SUBDIRS := \
 src \
 src/loggers \
 src/database \
+src/database/postGreSqlDatabase \
 src/dataSources \
 src/dataFiles \
 src/connectors \

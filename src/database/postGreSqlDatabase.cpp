@@ -7,7 +7,7 @@
 
 #include <database/postGreSqlDatabase.hpp>
 
-namespace database
+namespace db
 {
 	postGreSqlConnector::postGreSqlConnector(boost::shared_ptr<logger> log) : connector(log)
 	{
@@ -26,19 +26,16 @@ namespace database
 			new soci::session(soci::postgresql, connectionString));
 	}
 
-	postGreSqlDatabase::postGreSqlDatabase(boost::shared_ptr<design> des, boost::shared_ptr<logger> log)
-		: database(des, log)
+	postGreSqlDatabase::postGreSqlDatabase(boost::shared_ptr<designer> & design, boost::shared_ptr<logger> & log) : database(design, log)
 	{
 		// TODO Auto-generated constructor stub
 		connector_ = boost::shared_ptr<connector>(new postGreSqlConnector(log));
-
 	}
 
 	postGreSqlDatabase::~postGreSqlDatabase()
 	{
 		// TODO Auto-generated destructor stub
 	}
-
 	bool postGreSqlDatabase::checkStatus() const
 	{
 		try
@@ -72,9 +69,9 @@ namespace database
 				}
 			}
 
-			if (std::find(tests.cbegin(), tests.cend(), false) != tests.cend())
+			if (std::find(tests.cbegin(), tests.cend(), false) == tests.cend())
 			{
-				return false;
+				return true;
 			}
 		}
 		catch(const std::exception & ex)
@@ -84,6 +81,7 @@ namespace database
 				logger::verbosity::high);
 		}
 
+		return false;
 	}
 
 	void postGreSqlDatabase::rebuild()
@@ -95,59 +93,15 @@ namespace database
 			{
 				try
 				{
-					st = (connector_->session()->prepare << "DROP TABLE " + *it);
-					st.execute(true);
+					soci::statement(connector_->session()->prepare << "DROP TABLE " + *it).execute(true);
 				}
 				catch(...) {}
 			}
 
-			// TODO: add table structure in description
-			st = (connector_->session()->prepare
-				<< "CREATE TABLE index"
-				<< "("
-				<< "id SERIAL PRIMARY KEY,"
-				<< "source INTEGER NOT NULL,"
-				<< "description VARCHAR(250)"
-				<< ");");
-
-			st.execute(true);
-
-			st = (connector_->session()->prepare
-				<< "CREATE TABLE timeSeries"
-				<< "("
-				<< "id BIGSERIAL PRIMARY KEY,"
-				<< "index INTEGER NOT NULL,"
-				<< "date TIMESTAMP NOT NULL,"
-				<< "value REAL NOT NULL"
-				<< ");");
-
-			st.execute(true);
-
-			st = (connector_->session()->prepare
-				<< "ALTER TABLE timeSeries"
-				<< " ADD CONSTRAINT fk_index_timeSeries"
-				<< " FOREIGN KEY (index)"
-				<< " REFERENCES index(id);");
-
-			st.execute(true);
-
-			st = (connector_->session()->prepare
-				<< "CREATE TABLE source"
-				<< "("
-				<< "id SERIAL PRIMARY KEY,"
-				<< "name VARCHAR(250) NOT NULL"
-				<< ");");
-
-			st.execute(true);
-
-			st = (connector_->session()->prepare
-				<< "ALTER TABLE index"
-				<< " ADD CONSTRAINT fk_source_index"
-				<< " FOREIGN KEY (source)"
-				<< " REFERENCES source(id);");
-
-			st.execute(true);
-
+			for (auto it = design_->statements_.cbegin(); it != design_->statements_.cend(); it++)
+			{
+				soci::statement(connector_->session()->prepare << *it).execute(true);
+			}
 		}
 		catch(std::exception & ex)
 		{
@@ -157,4 +111,3 @@ namespace database
 		}
 	}
 }
-

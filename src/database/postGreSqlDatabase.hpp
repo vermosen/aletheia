@@ -8,14 +8,15 @@
 #ifndef DATABASE_POSTGRESQLDATABASE_HPP_
 #define DATABASE_POSTGRESQLDATABASE_HPP_
 
-#include <database.hpp>
 #include <string>
 
+#include <soci.h>
 #include <postgresql/common.h>
 
+#include "database.hpp"
 #include "logger.hpp"
 
-namespace database
+namespace db
 {
 	class postGreSqlConnector : public connector
 	{
@@ -27,8 +28,9 @@ namespace database
 
 	class postGreSqlDatabase : public database {
 	public:
-		postGreSqlDatabase(boost::shared_ptr<design>, boost::shared_ptr<logger>);
+		postGreSqlDatabase(boost::shared_ptr<designer> &, boost::shared_ptr<logger> &);
 		virtual ~postGreSqlDatabase();
+
 		virtual bool checkStatus() const;
 		virtual void rebuild();
 	};
