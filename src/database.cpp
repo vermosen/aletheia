@@ -26,6 +26,8 @@ namespace db
 	{
 		connector_->connect(connectionString);
 	}
+
+	boost::shared_ptr<connector> database::dbConnector() { return connector_; }
 }
 
 

@@ -34,8 +34,10 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
  /usr/include/postgresql/libpq-fe.h \
  /usr/include/postgresql/postgres_ext.h \
  /usr/include/postgresql/pg_config_ext.h \
+ /home/vermosen/eclipse/aletheia/src/recordset.hpp \
  /home/vermosen/eclipse/aletheia/src/database.hpp \
  /home/vermosen/eclipse/aletheia/src/logger.hpp \
+ /home/vermosen/eclipse/aletheia/src/database.hpp \
  /home/vermosen/eclipse/aletheia/src/logger.hpp
 
 /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp:
@@ -126,8 +128,12 @@ src/database/postGreSqlDatabase.d: ../src/database/postGreSqlDatabase.cpp \
 
 /usr/include/postgresql/pg_config_ext.h:
 
+/home/vermosen/eclipse/aletheia/src/recordset.hpp:
+
 /home/vermosen/eclipse/aletheia/src/database.hpp:
 
 /home/vermosen/eclipse/aletheia/src/logger.hpp:
+
+/home/vermosen/eclipse/aletheia/src/database.hpp:
 
 /home/vermosen/eclipse/aletheia/src/logger.hpp:

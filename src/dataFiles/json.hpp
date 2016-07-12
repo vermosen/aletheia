@@ -18,7 +18,6 @@ namespace dataFiles {
 	class json : public dataFile {
 	public:
 		json();
-		virtual ~json();
 		virtual void parse(std::stringstream & ss);
 
 		static registerType < dataFile, dataFile::type, json> enumRegister_;

@@ -8,7 +8,6 @@
 #ifndef CONNECTORS_QUANDL_HPP_
 #define CONNECTORS_QUANDL_HPP_
 
-
 #include <string>
 #include <exception>
 #include <iostream>
@@ -74,12 +73,10 @@ namespace dataSources
 			: dataSource(boost::shared_ptr<connector>(
 					new connectors::ssl(l, false)), l)
 		{
-			connector_->setHost("www.quandl.com", 443);
+			connector_->setHost("www.quandl.com", boost::lexical_cast<std::string>(443));
 		}
 
-		virtual ~quandl();
-
-		virtual timeSeries<double> getData()
+		virtual std::map<std::string, timeSeries<double> > getData()
 		{
 			boost::shared_ptr<dataFile> file =
 				abstractFactory<dataFile, dataFile::type>::createInstance(query_->type());
@@ -102,7 +99,7 @@ namespace dataSources
 					  const std::string & index,
 					  const boost::optional<boost::gregorian::date> & start,
 					  const boost::optional<boost::gregorian::date> & end,
-					  dataFile::type t = dataFile::type::csv,
+					  dataFile::type t = dataFile::type::xml,
 					  dataFile::sortOrder s = dataFile::sortOrder::descending);
 
 	private:
@@ -110,8 +107,6 @@ namespace dataSources
 		std::string token_ 	;
 		boost::shared_ptr<quandlQuery> query_;
 	};
-
-
 }
 
 #endif /* CONNECTORS_QUANDL_HPP_ */

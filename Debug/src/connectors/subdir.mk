@@ -4,12 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/connectors/http.cpp \
 ../src/connectors/ssl.cpp 
 
 OBJS += \
+./src/connectors/http.o \
 ./src/connectors/ssl.o 
 
 CPP_DEPS += \
+./src/connectors/http.d \
 ./src/connectors/ssl.d 
 
 

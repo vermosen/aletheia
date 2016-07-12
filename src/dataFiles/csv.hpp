@@ -15,7 +15,6 @@ namespace dataFiles {
 	class csv : public dataFile {
 	public:
 		csv();
-		virtual ~csv();
 		virtual void parse(std::stringstream & ss);
 
 		static registerType < dataFile, dataFile::type, csv> enumRegister_;

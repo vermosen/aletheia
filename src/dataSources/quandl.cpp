@@ -10,9 +10,6 @@
 
 namespace dataSources
 {
-	quandl::~quandl() {
-		// TODO Auto-generated destructor stub
-	}
 
 	void quandl::setQuery(const std::string & catalog,
 				  	  	  const std::string & index,

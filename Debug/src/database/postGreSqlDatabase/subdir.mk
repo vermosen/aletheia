@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/database/postGreSqlDatabase/aletheiaDesigner.cpp 
+../src/database/postGreSqlDatabase/aletheiaDatabase.cpp 
 
 OBJS += \
-./src/database/postGreSqlDatabase/aletheiaDesigner.o 
+./src/database/postGreSqlDatabase/aletheiaDatabase.o 
 
 CPP_DEPS += \
-./src/database/postGreSqlDatabase/aletheiaDesigner.d 
+./src/database/postGreSqlDatabase/aletheiaDatabase.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

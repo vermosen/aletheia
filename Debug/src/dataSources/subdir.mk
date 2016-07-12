@@ -4,13 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/dataSources/quandl.cpp 
+../src/dataSources/pepperstone.cpp \
+../src/dataSources/quandl.cpp \
+../src/dataSources/yahoo.cpp 
 
 OBJS += \
-./src/dataSources/quandl.o 
+./src/dataSources/pepperstone.o \
+./src/dataSources/quandl.o \
+./src/dataSources/yahoo.o 
 
 CPP_DEPS += \
-./src/dataSources/quandl.d 
+./src/dataSources/pepperstone.d \
+./src/dataSources/quandl.d \
+./src/dataSources/yahoo.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

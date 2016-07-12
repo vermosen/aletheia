@@ -48,20 +48,6 @@ private:
 // create function
 template <typename C, typename T> C * create() { return new T; }
 
-/*
-// alternative
-template <typename C, typename K, typename T>
-struct registerType// : abstractFactory<C, K>
-{
-public:
-	registerType(const K & key)
-	{
-		fact_.getMap()->insert(std::make_pair(key, &create<C, T>));
-	}
-private:
-	static abstractFactory<C, K> fact_;
-};*/
-
 template <typename C, typename K, typename T>
 struct registerType : abstractFactory<C, K>
 {
@@ -71,7 +57,5 @@ public:
 		abstractFactory<C, K>::getMap()->insert(std::make_pair(key, &create<C, T>));
 	}
 };
-
-
 
 #endif /* PATTERN_ABSTRACTFACTORY_HPP_ */

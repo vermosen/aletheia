@@ -19,7 +19,6 @@ namespace loggers {
 	class consoleLogger : public logger {
 	public:
 		consoleLogger(verbosity threshold = verbosity::low);
-		virtual ~consoleLogger();
 
 		virtual void addImpl(const std::string &, messageType);
 	};

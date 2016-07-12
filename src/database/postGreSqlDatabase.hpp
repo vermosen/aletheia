@@ -13,6 +13,7 @@
 #include <soci.h>
 #include <postgresql/common.h>
 
+#include "recordset.hpp"
 #include "database.hpp"
 #include "logger.hpp"
 
@@ -22,17 +23,15 @@ namespace db
 	{
 	public:
 		postGreSqlConnector(boost::shared_ptr<logger>);
-		virtual ~postGreSqlConnector();
 		virtual void connect(const std::string & connectionString);
 	};
 
 	class postGreSqlDatabase : public database {
 	public:
 		postGreSqlDatabase(boost::shared_ptr<designer> &, boost::shared_ptr<logger> &);
-		virtual ~postGreSqlDatabase();
 
 		virtual bool checkStatus() const;
-		virtual void rebuild();
+		virtual bool rebuild();
 	};
 }
 

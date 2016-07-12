@@ -16,10 +16,6 @@ namespace dataFiles {
 		// TODO Auto-generated constructor stub
 	}
 
-	json::~json() {
-		// TODO Auto-generated destructor stub
-	}
-
 	void json::parse(std::stringstream & ss) {
 
 		/*ptree pt;

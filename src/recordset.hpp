@@ -8,23 +8,35 @@
 #ifndef RECORDSET_HPP_
 #define RECORDSET_HPP_
 
+#include <vector>
+
+#include "database.hpp"
+
 namespace db
 {
-	template <typename T>
-	class recordSet
+	/*
+	 * K is the key, T is the record
+	 */
+	template <typename K, typename T>
+	class recordset
 	{
 	public:
-		recordSet(boost::shared_ptr<connector> conn) : conn_(conn) {}
-		virtual ~recordSet() {}
+		typedef K keyType;
+		typedef T recordType;
+	public:
+		recordset(boost::shared_ptr<connector> conn, boost::shared_ptr<logger> log) : connector_(conn), log_(log) {}
+		virtual ~recordset() {};
 
 		// implement crud operations
-		virtual void insert(const T & record) = 0;
-		virtual void update(const T & record) = 0;
-		virtual void remove(const T & record) = 0;
-		virtual std::vector<T> select(const std::string & filter) = 0;
+		virtual std::vector<keyType> insert(const std::vector<recordType> & record) = 0;
+		virtual void update(const recordType & record) = 0;
+		virtual void remove(const recordType & record) = 0;
+		virtual void select(std::vector<recordType> & ret, const std::string & filter) = 0;
+		virtual void select(const std::vector<keyType> & keys, std::vector<recordType> & ret) = 0;
 
-	private:
-		boost::shared_ptr<connector> conn_;
+	protected:
+		boost::shared_ptr<connector> connector_;
+		boost::shared_ptr<logger> log_;
 	};
 }
 

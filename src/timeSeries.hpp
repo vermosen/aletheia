@@ -31,16 +31,16 @@ public:
 			}
 		}
 	}
-	virtual ~timeSeries() {};
+	~timeSeries() {};
+
+	timeSeries(const timeSeries<T> & o)
+	{
+		values_ = o.values_;
+	}
 
 	timeSeries(const std::vector<std::pair<ptime, T>> & data)
 	{
 		for (auto& it : data) values_.insert(it);
-	}
-
-	timeSeries(timeSeries && o)
-	{
-		values_ = o.values_;
 	}
 
 	void push_back(const std::pair<ptime, T> & p)

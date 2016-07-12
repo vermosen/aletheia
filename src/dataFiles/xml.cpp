@@ -18,14 +18,11 @@ namespace dataFiles {
 			// TODO Auto-generated destructor stub
 		}
 
-	xml::~xml() {
-		// TODO Auto-generated destructor stub
-	}
-
 	void xml::parse(std::stringstream & ss) {
 
 		ptree pt; read_xml(ss, pt, xml_parser::trim_whitespace | xml_parser::no_comments);
 
+		timeSeries<double> temp;
 		for (auto& item : pt.get_child("quandl-response.dataset.data"))
 		{
 			if (item.first == "datum")
@@ -41,9 +38,11 @@ namespace dataFiles {
 				boost::gregorian::date date(boost::gregorian::from_simple_string(dateStr));;
 				double value = boost::lexical_cast<double>(valueStr);
 
-				ts_.push_back(std::pair<boost::posix_time::ptime, double>(
+				temp.push_back(std::pair<boost::posix_time::ptime, double>(
 					boost::posix_time::ptime(date), value));
 			}
 		}
+
+		ts_.insert(std::pair<std::string, timeSeries<double> >("id", temp));
 	}
 } /* namespace dataFile */

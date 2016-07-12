@@ -18,7 +18,6 @@ namespace dataFiles {
 	class xml : public dataFile {
 	public:
 		xml();
-		virtual ~xml();
 		virtual void parse(std::stringstream & ss);
 
 	private:

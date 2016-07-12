@@ -15,11 +15,6 @@ namespace db
 
 	}
 
-	postGreSqlConnector::~postGreSqlConnector()
-	{
-		// TODO Auto-generated destructor stub
-	}
-
 	void postGreSqlConnector::connect(const std::string & connectionString)
 	{
 		session_ = boost::shared_ptr<soci::session>(
@@ -32,10 +27,6 @@ namespace db
 		connector_ = boost::shared_ptr<connector>(new postGreSqlConnector(log));
 	}
 
-	postGreSqlDatabase::~postGreSqlDatabase()
-	{
-		// TODO Auto-generated destructor stub
-	}
 	bool postGreSqlDatabase::checkStatus() const
 	{
 		try
@@ -54,8 +45,6 @@ namespace db
 			{
 				tests.push_back(false);
 			}
-
-			std::vector<std::string> names;
 
 			while (st.fetch())
 			{
@@ -84,8 +73,9 @@ namespace db
 		return false;
 	}
 
-	void postGreSqlDatabase::rebuild()
+	bool postGreSqlDatabase::rebuild()
 	{
+		connector_->session()->begin();
 		try
 		{
 			soci::statement st = (connector_->session()->prepare << "");
@@ -93,7 +83,7 @@ namespace db
 			{
 				try
 				{
-					soci::statement(connector_->session()->prepare << "DROP TABLE " + *it).execute(true);
+					soci::statement(connector_->session()->prepare << "DROP TABLE " + *it + " CASCADE").execute(true);
 				}
 				catch(...) {}
 			}
@@ -102,12 +92,20 @@ namespace db
 			{
 				soci::statement(connector_->session()->prepare << *it).execute(true);
 			}
+
+			connector_->session()->commit();
+
+			return true;
 		}
 		catch(std::exception & ex)
 		{
+			connector_->session()->rollback();
+
 			log_->add("an error has occured",
 				logger::messageType::error,
 				logger::verbosity::high);
+
+			return false;
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace connectors {
 		ssl(const boost::shared_ptr<logger> & l, bool verifyHost = false);
 
 		// interfaces
-		virtual void setHost(const std::string & host, int port = -1);
+		virtual void setHost(const std::string & host, const std::string & port);
 		virtual void setQuery(const boost::shared_ptr<query> &);
 		virtual void connect();
 		virtual std::stringstream & getStream();

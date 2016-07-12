@@ -13,7 +13,8 @@ namespace connectors {
 		: 	connector(l),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
-			socket_(service_, context_)
+			socket_(service_, context_),
+			answered_(false)
 	{
 
 		// load the certificate from default
@@ -34,18 +35,9 @@ namespace connectors {
 		}
 	}
 
-	void ssl::setHost(const std::string & host, int port)
+	void ssl::setHost(const std::string & host, const std::string & port)
 	{
-		if (port == -1)
-		{
-			port_ = "https";
-		}
-		else
-		{
-			port_ = boost::lexical_cast<std::string>(port);
-		}
-
-		host_ = host;
+		port_ = port; host_ = host;
 
 		logger_->add("trying to resolve host " + host,
 			logger::messageType::information,

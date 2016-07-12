@@ -34,11 +34,11 @@ public:
 
 	dataFile() {};
 	virtual ~dataFile() {};
-	timeSeries<double> getData();
+	std::map<std::string, timeSeries<double> > getData();
 	virtual void parse(std::stringstream & ss) = 0;
 
 protected:
-	timeSeries<double> ts_;
+	std::map<std::string, timeSeries<double> > ts_;
 };
 
 std::ostream& operator<<(std::ostream&, dataFile::type);

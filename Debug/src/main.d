@@ -12,6 +12,8 @@ src/main.d: ../src/main.cpp ../src/loggers/consoleLogger.hpp \
  /home/vermosen/eclipse/aletheia/src/dataFiles/json.hpp \
  /home/vermosen/eclipse/aletheia/src/dataFile.hpp \
  /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp \
+ ../src/dataSources/pepperstone.hpp \
+ /home/vermosen/eclipse/aletheia/src/connectors/http.hpp \
  ../src/timeSeries.hpp ../src/database/postGreSqlDatabase.hpp \
  /usr/local/include/soci/soci.h /usr/local/include/soci/backend-loader.h \
  /usr/local/include/soci/soci-backend.h \
@@ -47,8 +49,11 @@ src/main.d: ../src/main.cpp ../src/loggers/consoleLogger.hpp \
  /usr/include/postgresql/libpq-fe.h \
  /usr/include/postgresql/postgres_ext.h \
  /usr/include/postgresql/pg_config_ext.h \
+ /home/vermosen/eclipse/aletheia/src/recordset.hpp \
  /home/vermosen/eclipse/aletheia/src/database.hpp \
- ../src/database/postGreSqlDatabase/aletheiaDesigner.hpp \
+ /home/vermosen/eclipse/aletheia/src/database.hpp \
+ ../src/database/postGreSqlDatabase/aletheiaDatabase.hpp \
+ /home/vermosen/eclipse/aletheia/src/timeSeries.hpp \
  /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp
 
 ../src/loggers/consoleLogger.hpp:
@@ -78,6 +83,10 @@ src/main.d: ../src/main.cpp ../src/loggers/consoleLogger.hpp \
 /home/vermosen/eclipse/aletheia/src/dataFile.hpp:
 
 /home/vermosen/eclipse/aletheia/src/dataFiles/csv.hpp:
+
+../src/dataSources/pepperstone.hpp:
+
+/home/vermosen/eclipse/aletheia/src/connectors/http.hpp:
 
 ../src/timeSeries.hpp:
 
@@ -169,8 +178,14 @@ src/main.d: ../src/main.cpp ../src/loggers/consoleLogger.hpp \
 
 /usr/include/postgresql/pg_config_ext.h:
 
+/home/vermosen/eclipse/aletheia/src/recordset.hpp:
+
 /home/vermosen/eclipse/aletheia/src/database.hpp:
 
-../src/database/postGreSqlDatabase/aletheiaDesigner.hpp:
+/home/vermosen/eclipse/aletheia/src/database.hpp:
+
+../src/database/postGreSqlDatabase/aletheiaDatabase.hpp:
+
+/home/vermosen/eclipse/aletheia/src/timeSeries.hpp:
 
 /home/vermosen/eclipse/aletheia/src/database/postGreSqlDatabase.hpp:

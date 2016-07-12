@@ -17,10 +17,6 @@ namespace dataFiles {
 
 	}
 
-	csv::~csv() {
-		// TODO Auto-generated destructor stub
-	}
-
 	void csv::parse(std::stringstream & ss) {
 
 		/*ptree pt;

@@ -30,7 +30,7 @@ public:
 
 	// interfaces
 	virtual void connect() = 0;
-	virtual void setHost(const std::string & host, int port = -1) = 0;
+	virtual void setHost(const std::string & host, const std::string & port) = 0;
 	virtual void setQuery(const boost::shared_ptr<query> & qr) = 0;
 	virtual std::stringstream & getStream() = 0;
 
